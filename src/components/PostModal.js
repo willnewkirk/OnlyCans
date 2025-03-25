@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import './PostModal.css';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { formatTimestamp } from '../utils/formatTimestamp';
 
 export default function PostModal({ post, onClose, onVote, onComment, onDeletePost, onDeleteComment }) {
   const { currentUser } = useAuth();
   const [newComment, setNewComment] = useState('');
+  const navigate = useNavigate();
 
   const handleCommentSubmit = (e) => {
     e.preventDefault();
@@ -23,15 +27,19 @@ export default function PostModal({ post, onClose, onVote, onComment, onDeletePo
         
         <div className="modal-header">
           <div className="modal-header-left">
-            <span className="modal-author">{post.authorName}</span>
+            <Link 
+              to={`/profile/${post.authorName}`} 
+              className="modal-author"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigate(`/profile/${post.authorName}`);
+              }}
+            >
+              {post.authorName}
+            </Link>
             <span className="modal-timestamp">
-              {new Date(post.timestamp).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
+              {formatTimestamp(post.timestamp)}
             </span>
           </div>
         </div>

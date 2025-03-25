@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import PostModal from './PostModal';
 import './MainContent.css';
@@ -8,6 +8,38 @@ export default function MainContent({ posts, onVote, onDelete, onCreatePost, onC
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [selectedPost, setSelectedPost] = useState(null);
+
+  const formatTimestamp = (timestamp) => {
+    const now = Date.now();
+    const diff = now - timestamp;
+    
+    // Convert to seconds
+    const seconds = Math.floor(diff / 1000);
+    
+    // Convert to minutes
+    const minutes = Math.floor(seconds / 60);
+    
+    // Convert to hours
+    const hours = Math.floor(minutes / 60);
+    
+    // Convert to days
+    const days = Math.floor(hours / 24);
+    
+    // Convert to months (approximate)
+    const months = Math.floor(days / 30);
+    
+    if (months > 0) {
+      return `${months}mo`;
+    } else if (days > 0) {
+      return `${days}d`;
+    } else if (hours > 0) {
+      return `${hours}h`;
+    } else if (minutes > 0) {
+      return `${minutes}m`;
+    } else {
+      return 'just now';
+    }
+  };
 
   const truncateText = (text, maxLength = 4) => {
     if (text && text.length > maxLength) {
@@ -57,17 +89,23 @@ export default function MainContent({ posts, onVote, onDelete, onCreatePost, onC
               onClick={() => handlePostClick(post)}
             >
               <div className="post-header">
-                <span className="post-author">{post.authorName}</span>
-                <div className="post-header-actions">
+                <div className="post-header-left">
+                  <Link 
+                    to={`/profile/${post.authorName}`} 
+                    className="post-author"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      navigate(`/profile/${post.authorName}`);
+                    }}
+                  >
+                    {post.authorName}
+                  </Link>
                   <span className="post-timestamp">
-                    {new Date(post.timestamp).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
+                    {formatTimestamp(post.timestamp)}
                   </span>
+                </div>
+                <div className="post-header-actions">
                   {post.authorId === currentUser?.uid && (
                     <button 
                       className="delete-post"

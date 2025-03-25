@@ -39,21 +39,27 @@
 }
 
 .modal-author {
+  color: #8A2BE2;
   font-weight: 600;
-  color: #e0e0e0;
-  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.modal-author:hover {
+  color: #6A1B9A;
 }
 
 .modal-timestamp {
-  color: #b0b0b0;
+  color: #666;
   font-size: 12px;
 }
 
-.modal-title {
-  color: #e0e0e0;
+.post-title {
   font-size: 24px;
+  font-weight: 600;
+  color: #e0e0e0;
   margin-bottom: 16px;
-  line-height: 1.4;
+  text-align: center;
 }
 
 .modal-text {

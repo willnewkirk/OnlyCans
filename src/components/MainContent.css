@@ -112,33 +112,36 @@
   margin-bottom: 12px;
 }
 
-.post-author {
-  font-weight: 600;
-  color: #e0e0e0;
-  font-size: 14px;
-}
-
-.post-header-actions {
+.post-header-left {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
+.post-author {
+  color: #8A2BE2;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.post-author:hover {
+  color: #6A1B9A;
+}
+
 .post-timestamp {
-  color: #b0b0b0;
+  color: #666;
   font-size: 12px;
 }
 
 .post-title {
+  font-size: 16px;
+  margin: 8px 0;
   color: #e0e0e0;
-  font-size: 18px;
-  margin-bottom: 8px;
-  line-height: 1.4;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: calc(100% - 20px);
-  display: block;
 }
 
 .post-content {

@@ -7,47 +7,12 @@ import Login from './components/Auth/Login';
 import Signup from './components/Auth/Signup';
 import CreatePost from './components/CreatePost';
 import MainContent from './components/MainContent';
+import Profile from './components/Profile';
+import Header from './components/Header';
 import './App.css';
 
 // Add debugging
 console.log('App component starting...');
-
-function Header() {
-  const { currentUser, logout } = useAuth();
-  const navigate = useNavigate();
-  
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/login');
-    } catch (error) {
-      console.error('Failed to log out:', error);
-    }
-  };
-
-  return (
-    <header className="header">
-      <div className="header-content">
-        <div className="logo-section">
-          <h1 className="logo">OnlyCans</h1>
-        </div>
-        <div className="search-bar">
-          <input type="text" placeholder="Search OnlyCans" />
-        </div>
-        <div className="user-controls">
-          {currentUser ? (
-            <>
-              <span className="username">{currentUser.displayName || 'Anonymous User'}</span>
-              <button className="profile-btn" onClick={handleLogout}>Logout</button>
-            </>
-          ) : (
-            <button className="profile-btn" onClick={() => window.location.href = '/login'}>Login</button>
-          )}
-        </div>
-      </div>
-    </header>
-  );
-}
 
 function ProtectedRoute({ children }) {
   const { currentUser } = useAuth();
@@ -379,6 +344,11 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/profile/:username" element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          } />
           <Route path="/" element={
             <ProtectedRoute>
               <AppContent />

@@ -2,6 +2,10 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 body {
@@ -128,6 +132,10 @@ body {
   background-color: #272729;
   color: #d7dadc;
   font-size: 14px;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
 .user-controls {
@@ -137,9 +145,15 @@ body {
 }
 
 .username {
-  color: #b388ff;
-  font-weight: 500;
-  font-size: 1rem;
+  color: #8A2BE2;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.username:hover {
+  color: #6A1B9A;
 }
 
 .profile-btn {
@@ -380,6 +394,10 @@ body {
   border-radius: 4px;
   background-color: #1a1a1b;
   color: #d7dadc;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
 .auth-card button {
@@ -641,6 +659,10 @@ input, textarea {
   border-radius: 4px;
   padding: 8px;
   margin: 4px 0;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
 input:focus, textarea:focus {
@@ -692,4 +714,15 @@ input:focus, textarea:focus {
     padding: 6px 12px;
     font-size: 14px;
   }
+}
+
+.post-author {
+  color: #8A2BE2;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.post-author:hover {
+  color: #6A1B9A;
 } 
