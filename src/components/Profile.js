@@ -233,7 +233,9 @@ function Profile() {
   };
 
   const renderFlairs = (username) => {
-    if (username === 'amleth') {
+    console.log('Current username:', username); // Debug log
+    const normalizedUsername = username?.toLowerCase();
+    if (normalizedUsername === 'amleth' || normalizedUsername === 'pigment') {
       return (
         <div className="flair-container">
           <span className="flair admin">Admin</span>

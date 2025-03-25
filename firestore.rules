@@ -7,7 +7,7 @@ service cloud.firestore {
       allow update: if request.auth != null && 
         (resource.data.authorId == request.auth.uid || 
          request.resource.data.diff(resource.data).affectedKeys()
-         .hasOnly(['votes', 'userVotes']));
+         .hasOnly(['votes', 'userVotes', 'comments']));
       allow delete: if request.auth != null && 
         (resource.data.authorId == request.auth.uid ||
          request.auth.token.email == 'amleth');
