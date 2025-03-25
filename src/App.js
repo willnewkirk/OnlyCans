@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './components/Auth/Login';
@@ -6,6 +6,9 @@ import Signup from './components/Auth/Signup';
 import CreatePost from './components/CreatePost';
 import MainContent from './components/MainContent';
 import './App.css';
+
+// Add debugging
+console.log('App component starting...');
 
 function Header() {
   const { currentUser, logout } = useAuth();
@@ -48,92 +51,129 @@ function Header() {
 
 function ProtectedMainContent({ posts, onVote, onDelete }) {
   const { currentUser } = useAuth();
+  console.log('ProtectedMainContent rendering, currentUser:', currentUser);
   if (!currentUser) {
+    console.log('No current user, redirecting to login');
     return <Navigate to="/login" />;
   }
   return <MainContent posts={posts} onVote={onVote} onDelete={onDelete} />;
 }
 
 function AppContent() {
-  const [posts, setPosts] = useState(() => {
-    // Initialize posts from localStorage if available
-    const savedPosts = localStorage.getItem('posts');
-    return savedPosts ? JSON.parse(savedPosts) : [];
-  });
-  const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const [posts, setPosts] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
+
+  // Add debugging
+  console.log('AppContent rendering, currentUser:', currentUser);
+
+  useEffect(() => {
+    console.log('Loading posts from localStorage...');
+    const savedPosts = JSON.parse(localStorage.getItem('posts') || '[]');
+    console.log('Loaded posts:', savedPosts);
+    setPosts(savedPosts);
+  }, []);
 
   const handleCreatePost = (newPost) => {
-    const post = {
-      ...newPost,
-      id: Date.now().toString(),
-      timestamp: Date.now(),
-      votes: 0,
-      comments: []
-    };
-    setPosts(prevPosts => {
-      const updatedPosts = [post, ...prevPosts];
-      localStorage.setItem('posts', JSON.stringify(updatedPosts));
-      return updatedPosts;
-    });
-  };
-
-  const handleDelete = (postId) => {
-    setPosts(prevPosts => {
-      const updatedPosts = prevPosts.filter(post => post.id !== postId);
-      localStorage.setItem('posts', JSON.stringify(updatedPosts));
-      return updatedPosts;
-    });
+    console.log('Creating new post:', newPost);
+    const updatedPosts = [newPost, ...posts];
+    setPosts(updatedPosts);
+    localStorage.setItem('posts', JSON.stringify(updatedPosts));
+    setIsCreatePostOpen(false);
   };
 
   const handleVote = (postId, voteType) => {
-    setPosts(prevPosts => {
-      const updatedPosts = prevPosts.map(post => {
-        if (post.id === postId) {
-          // Get the current user's vote
-          const userVote = post.userVotes?.[currentUser?.uid];
-          
-          // If user is removing their vote
-          if (userVote === voteType) {
-            return {
-              ...post,
-              votes: post.votes - (voteType === 'up' ? 1 : -1),
-              userVotes: {
-                ...post.userVotes,
-                [currentUser.uid]: null
-              }
-            };
-          }
-          
-          // If user is changing their vote
-          if (userVote) {
-            return {
-              ...post,
-              votes: post.votes + (voteType === 'up' ? 2 : -2),
-              userVotes: {
-                ...post.userVotes,
-                [currentUser.uid]: voteType
-              }
-            };
-          }
-          
-          // If user is voting for the first time
-          return {
-            ...post,
-            votes: post.votes + (voteType === 'up' ? 1 : -1),
-            userVotes: {
-              ...post.userVotes,
-              [currentUser.uid]: voteType
-            }
-          };
+    console.log('Handling vote:', { postId, voteType });
+    const updatedPosts = posts.map(post => {
+      if (post.id === postId) {
+        const currentVote = post.userVotes?.[currentUser?.uid];
+        let newVoteCount = post.votes || 0;
+
+        if (currentVote === voteType) {
+          // Remove vote
+          newVoteCount -= voteType === 'up' ? 1 : -1;
+          delete post.userVotes[currentUser.uid];
+        } else if (currentVote) {
+          // Change vote
+          newVoteCount -= currentVote === 'up' ? 1 : -1;
+          newVoteCount += voteType === 'up' ? 1 : -1;
+          post.userVotes[currentUser.uid] = voteType;
+        } else {
+          // First vote
+          newVoteCount += voteType === 'up' ? 1 : -1;
+          post.userVotes = { ...post.userVotes, [currentUser.uid]: voteType };
         }
-        return post;
-      });
-      
-      // Save to localStorage
-      localStorage.setItem('posts', JSON.stringify(updatedPosts));
-      return updatedPosts;
+
+        return { ...post, votes: newVoteCount };
+      }
+      return post;
     });
+
+    setPosts(updatedPosts);
+    localStorage.setItem('posts', JSON.stringify(updatedPosts));
+  };
+
+  const handleDelete = (postId) => {
+    console.log('Deleting post:', postId);
+    const updatedPosts = posts.filter(post => post.id !== postId);
+    setPosts(updatedPosts);
+    localStorage.setItem('posts', JSON.stringify(updatedPosts));
+    if (selectedPost?.id === postId) {
+      setSelectedPost(null);
+    }
+  };
+
+  const handleComment = (postId, comment) => {
+    console.log('Adding comment:', { postId, comment });
+    const updatedPosts = posts.map(post => {
+      if (post.id === postId) {
+        return {
+          ...post,
+          comments: [...(post.comments || []), { ...comment, id: Date.now().toString() }]
+        };
+      }
+      return post;
+    });
+
+    setPosts(updatedPosts);
+    localStorage.setItem('posts', JSON.stringify(updatedPosts));
+  };
+
+  const handleDeleteComment = (postId, commentId) => {
+    console.log('Deleting comment:', { postId, commentId });
+    const updatedPosts = posts.map(post => {
+      if (post.id === postId) {
+        return {
+          ...post,
+          comments: post.comments.filter(comment => comment.id !== commentId)
+        };
+      }
+      return post;
+    });
+
+    setPosts(updatedPosts);
+    localStorage.setItem('posts', JSON.stringify(updatedPosts));
+  };
+
+  const ProtectedMainContent = () => {
+    console.log('ProtectedMainContent rendering, currentUser:', currentUser);
+    if (!currentUser) {
+      console.log('No current user, redirecting to login');
+      return <Navigate to="/login" />;
+    }
+    return (
+      <MainContent
+        posts={posts}
+        onVote={handleVote}
+        onComment={handleComment}
+        onDeleteComment={handleDeleteComment}
+        onDelete={handleDelete}
+        onCreatePost={() => setIsCreatePostOpen(true)}
+        selectedPost={selectedPost}
+        setSelectedPost={setSelectedPost}
+      />
+    );
   };
 
   return (
@@ -151,15 +191,80 @@ function AppContent() {
               }} />
             </ProtectedRoute>
           } />
-          <Route path="/" element={<ProtectedMainContent posts={posts} onVote={handleVote} onDelete={handleDelete} />} />
+          <Route path="/" element={<ProtectedMainContent />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
+      {isCreatePostOpen && (
+        <CreatePost
+          onClose={() => setIsCreatePostOpen(false)}
+          onSubmit={handleCreatePost}
+        />
+      )}
     </div>
   );
 }
 
 function App() {
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      try {
+        // Wait for a small delay to ensure Firebase is ready
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        setIsInitialized(true);
+      } catch (err) {
+        console.error('Initialization error:', err);
+        setError(err.message);
+      }
+    };
+
+    initializeApp();
+  }, []);
+
+  if (!isInitialized) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#2d2d2d',
+        color: '#e0e0e0',
+        padding: '20px',
+        textAlign: 'center'
+      }}>
+        <h2>Loading OnlyCans...</h2>
+        {error && (
+          <div style={{
+            marginTop: '20px',
+            color: '#ff6b6b',
+            maxWidth: '600px'
+          }}>
+            <p>Error: {error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              style={{
+                marginTop: '10px',
+                padding: '8px 16px',
+                backgroundColor: '#4a90e2',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              Retry
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <AuthProvider>
       <AppContent />

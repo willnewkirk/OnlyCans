@@ -17,10 +17,10 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ 
-          padding: '20px', 
-          textAlign: 'center', 
-          color: '#e0e0e0',
+        <div style={{
+          padding: '20px',
+          textAlign: 'center',
+          color: '#fff',
           backgroundColor: '#2d2d2d',
           minHeight: '100vh',
           display: 'flex',
@@ -29,20 +29,20 @@ class ErrorBoundary extends React.Component {
           alignItems: 'center'
         }}>
           <h1>Something went wrong.</h1>
-          <p>{this.state.error?.message}</p>
-          <button 
+          <p>Please try refreshing the page.</p>
+          <button
             onClick={() => window.location.reload()}
             style={{
               padding: '10px 20px',
-              backgroundColor: '#4a90e2',
-              color: 'white',
+              backgroundColor: '#b388ff',
               border: 'none',
               borderRadius: '4px',
+              color: '#fff',
               cursor: 'pointer',
               marginTop: '20px'
             }}
           >
-            Reload Page
+            Refresh Page
           </button>
         </div>
       );

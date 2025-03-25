@@ -1,4 +1,5 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { auth } from '../firebase';
 import { 
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -6,7 +7,6 @@ import {
   onAuthStateChanged,
   updateProfile
 } from 'firebase/auth';
-import { auth } from '../firebase';
 
 const AuthContext = createContext();
 
@@ -19,7 +19,11 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Add debugging
+  console.log('AuthProvider initializing...');
+
   async function signup(email, password) {
+    console.log('Attempting signup...');
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       return userCredential;
@@ -30,10 +34,12 @@ export function AuthProvider({ children }) {
   }
 
   function login(email, password) {
+    console.log('Attempting login...');
     return signInWithEmailAndPassword(auth, email, password);
   }
 
   function logout() {
+    console.log('Attempting logout...');
     return signOut(auth);
   }
 
@@ -53,7 +59,9 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
+    console.log('Setting up auth state listener...');
     const unsubscribe = onAuthStateChanged(auth, async user => {
+      console.log('Auth state changed:', user ? 'User logged in' : 'No user');
       if (user) {
         // Get fresh user data to ensure we have the latest displayName
         await user.reload();
@@ -80,13 +88,9 @@ export function AuthProvider({ children }) {
     updateUserProfile
   };
 
-  if (loading) {
-    return null;
-  }
-
   return (
     <AuthContext.Provider value={value}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 } 
