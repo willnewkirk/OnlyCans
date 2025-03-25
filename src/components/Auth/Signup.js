@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { updateProfile } from 'firebase/auth';
@@ -26,27 +25,13 @@ export default function Signup() {
       return setError('Username is required');
     }
 
-    if (username.length < 3) {
-      return setError('Username must be at least 3 characters long');
-    }
-
-    if (username.length > 20) {
-      return setError('Username must be less than 20 characters');
-    }
-
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      return setError('Username can only contain letters, numbers, and underscores');
-    }
-
     try {
       setError('');
       setLoading(true);
-      
-      // First create the user account
       const userCredential = await signup(email, password);
       const user = userCredential.user;
       
-      // Then update the profile with the username
+      // Update the user's profile with the username
       await updateProfile(user, {
         displayName: username
       });
@@ -74,13 +59,8 @@ export default function Signup() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Choose a username (3-20 characters)"
               required
-              minLength={3}
-              maxLength={20}
-              pattern="[a-zA-Z0-9_]+"
             />
-            <small className="input-help">Letters, numbers, and underscores only</small>
           </div>
           <div className="form-group">
             <label>Email</label>
@@ -119,8 +99,4 @@ export default function Signup() {
       </div>
     </div>
   );
-}
-
-Signup.propTypes = {
-  // Add any necessary prop types here
-}; 
+} 

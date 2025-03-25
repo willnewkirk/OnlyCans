@@ -14,6 +14,7 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
+// eslint-disable-next-line react/prop-types
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -52,13 +53,15 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, user => {
+    const unsubscribe = onAuthStateChanged(auth, async user => {
       if (user) {
-        // Update the user state with the latest profile data
+        // Get fresh user data to ensure we have the latest displayName
+        await user.reload();
+        const freshUser = auth.currentUser;
         setCurrentUser({
-          ...user,
-          displayName: user.displayName || '',
-          email: user.email,
+          ...freshUser,
+          displayName: freshUser.displayName || '',
+          email: freshUser.email,
         });
       } else {
         setCurrentUser(null);
@@ -77,9 +80,13 @@ export function AuthProvider({ children }) {
     updateUserProfile
   };
 
+  if (loading) {
+    return null;
+  }
+
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 } 

@@ -5,11 +5,6 @@ import Login from './components/Auth/Login';
 import Signup from './components/Auth/Signup';
 import './App.css';
 
-function PrivateRoute({ children }) {
-  const { currentUser } = useAuth();
-  return currentUser ? children : <Navigate to="/login" />;
-}
-
 function Header() {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
@@ -88,6 +83,14 @@ function MainContent() {
   );
 }
 
+function ProtectedMainContent() {
+  const { currentUser } = useAuth();
+  if (!currentUser) {
+    return <Navigate to="/login" />;
+  }
+  return <MainContent />;
+}
+
 function App() {
   return (
     <AuthProvider>
@@ -97,14 +100,7 @@ function App() {
           <Routes>
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
-            <Route
-              path="/"
-              element={
-                <PrivateRoute>
-                  <MainContent />
-                </PrivateRoute>
-              }
-            />
+            <Route path="/" element={<ProtectedMainContent />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </div>
