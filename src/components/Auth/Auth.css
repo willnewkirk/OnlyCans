@@ -26,17 +26,51 @@
   text-shadow: 2px 2px 4px rgba(179, 136, 255, 0.3);
 }
 
-.auth-card input {
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #d7dadc;
+  font-weight: 500;
+}
+
+.form-group input {
   width: 100%;
   padding: 10px;
-  margin-bottom: 1rem;
   border: 1px solid #343536;
   border-radius: 4px;
   background-color: #1a1a1b;
   color: #d7dadc;
+  transition: all 0.2s ease;
 }
 
-.auth-card button {
+.form-group input:focus {
+  outline: none;
+  border-color: #b388ff;
+  box-shadow: 0 0 0 2px rgba(179, 136, 255, 0.2);
+}
+
+.input-error {
+  border-color: #ff6b6b !important;
+}
+
+.input-error-message {
+  color: #ff6b6b;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.input-help {
+  display: block;
+  margin-top: 0.25rem;
+  color: #8b8b8b;
+  font-size: 0.8rem;
+}
+
+.auth-button {
   width: 100%;
   padding: 10px;
   background-color: #b388ff;
@@ -49,14 +83,15 @@
   transition: all 0.2s ease;
 }
 
-.auth-card button:hover {
+.auth-button:hover:not(:disabled) {
   background-color: #9575cd;
   transform: translateY(-1px);
 }
 
-.auth-card button:disabled {
+.auth-button:disabled {
   background-color: #666;
   cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .error {
@@ -68,12 +103,19 @@
   margin-bottom: 1rem;
 }
 
-.auth-card a {
+.auth-links {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: #d7dadc;
+}
+
+.auth-links a {
   color: #b388ff;
   text-decoration: none;
   transition: color 0.2s ease;
+  margin-left: 0.5rem;
 }
 
-.auth-card a:hover {
+.auth-links a:hover {
   color: #9575cd;
 } 

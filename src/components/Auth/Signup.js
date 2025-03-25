@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate, Link } from 'react-router-dom';
 import { updateProfile } from 'firebase/auth';
 import './Auth.css';
 
@@ -10,56 +11,46 @@ export default function Signup() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [usernameError, setUsernameError] = useState('');
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
 
-  const validateUsername = (username) => {
-    if (username.length < 3) {
-      setUsernameError('Username must be at least 3 characters long');
-      return false;
-    }
-    if (username.length > 20) {
-      setUsernameError('Username must be less than 20 characters');
-      return false;
-    }
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      setUsernameError('Username can only contain letters, numbers, and underscores');
-      return false;
-    }
-    setUsernameError('');
-    return true;
-  };
-
-  const handleUsernameChange = (e) => {
-    const newUsername = e.target.value;
-    setUsername(newUsername);
-    validateUsername(newUsername);
-  };
-
   async function handleSubmit(e) {
     e.preventDefault();
-
-    if (!validateUsername(username)) {
-      return;
-    }
 
     if (password !== confirmPassword) {
       return setError('Passwords do not match');
     }
 
+    if (!username) {
+      return setError('Username is required');
+    }
+
+    if (username.length < 3) {
+      return setError('Username must be at least 3 characters long');
+    }
+
+    if (username.length > 20) {
+      return setError('Username must be less than 20 characters');
+    }
+
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      return setError('Username can only contain letters, numbers, and underscores');
+    }
+
     try {
       setError('');
       setLoading(true);
+      
+      // First create the user account
       const userCredential = await signup(email, password);
       const user = userCredential.user;
       
-      // Update the user's profile with the username
+      // Then update the profile with the username
       await updateProfile(user, {
         displayName: username
       });
-      
+
       // Force a reload to ensure the displayName is updated
       await user.reload();
       
@@ -74,61 +65,62 @@ export default function Signup() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>Sign Up</h2>
-        {error && <div className="error">{error}</div>}
+        <h2>Sign Up for OnlyCans</h2>
+        {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
+            <label>Username</label>
             <input
               type="text"
-              placeholder="Username"
               value={username}
-              onChange={handleUsernameChange}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Choose a username (3-20 characters)"
               required
               minLength={3}
               maxLength={20}
               pattern="[a-zA-Z0-9_]+"
-              className={usernameError ? 'input-error' : ''}
             />
-            {usernameError && <div className="input-error-message">{usernameError}</div>}
-            <div className="input-help-text">
-              Choose a unique username (3-20 characters, letters, numbers, and underscores only)
-            </div>
+            <small className="input-help">Letters, numbers, and underscores only</small>
           </div>
           <div className="form-group">
+            <label>Email</label>
             <input
               type="email"
-              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
           <div className="form-group">
+            <label>Password</label>
             <input
               type="password"
-              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
           <div className="form-group">
+            <label>Confirm Password</label>
             <input
               type="password"
-              placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
           </div>
-          <button disabled={loading || usernameError} type="submit">
+          <button disabled={loading} type="submit" className="auth-button">
             Sign Up
           </button>
         </form>
-        <p className="auth-link">
+        <div className="auth-links">
           Already have an account? <Link to="/login">Log In</Link>
-        </p>
+        </div>
       </div>
     </div>
   );
-} 
+}
+
+Signup.propTypes = {
+  // Add any necessary prop types here
+}; 

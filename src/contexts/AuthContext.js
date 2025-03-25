@@ -3,7 +3,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  updateProfile
 } from 'firebase/auth';
 import { auth } from '../firebase';
 
@@ -17,8 +18,14 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  function signup(email, password) {
-    return createUserWithEmailAndPassword(auth, email, password);
+  async function signup(email, password) {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      return userCredential;
+    } catch (error) {
+      console.error('Signup error:', error);
+      throw error;
+    }
   }
 
   function login(email, password) {
@@ -29,13 +36,28 @@ export function AuthProvider({ children }) {
     return signOut(auth);
   }
 
+  // Update user profile function
+  async function updateUserProfile(user, data) {
+    try {
+      await updateProfile(user, data);
+      await user.reload();
+      setCurrentUser({
+        ...user,
+        ...data
+      });
+    } catch (error) {
+      console.error('Profile update error:', error);
+      throw error;
+    }
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
       if (user) {
         // Update the user state with the latest profile data
         setCurrentUser({
           ...user,
-          displayName: user.displayName,
+          displayName: user.displayName || '',
           email: user.email,
         });
       } else {
@@ -51,7 +73,8 @@ export function AuthProvider({ children }) {
     currentUser,
     signup,
     login,
-    logout
+    logout,
+    updateUserProfile
   };
 
   return (

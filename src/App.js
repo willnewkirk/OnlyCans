@@ -35,9 +35,14 @@ function Header() {
             <button className="profile-btn" onClick={handleLogout}>Logout</button>
           </>
         ) : (
-          <Link to="/login">
-            <button className="profile-btn">Login</button>
-          </Link>
+          <div className="auth-buttons">
+            <Link to="/login">
+              <button className="profile-btn">Login</button>
+            </Link>
+            <Link to="/signup">
+              <button className="profile-btn">Sign Up</button>
+            </Link>
+          </div>
         )}
       </div>
     </header>
@@ -88,15 +93,21 @@ function App() {
     <AuthProvider>
       <div className="App">
         <Header />
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/" element={
-            <PrivateRoute>
-              <MainContent />
-            </PrivateRoute>
-          } />
-        </Routes>
+        <div className="app-container">
+          <Routes>
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/"
+              element={
+                <PrivateRoute>
+                  <MainContent />
+                </PrivateRoute>
+              }
+            />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </div>
       </div>
     </AuthProvider>
   );
