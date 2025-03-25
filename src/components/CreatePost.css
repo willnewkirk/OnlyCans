@@ -1,0 +1,175 @@
+.create-post-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  margin-top: 60px;
+}
+
+.create-post-card {
+  background-color: #272729;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 800px;
+  border: 1px solid #343536;
+}
+
+.create-post-card h2 {
+  color: #b388ff;
+  margin-bottom: 1.5rem;
+  font-family: 'Permanent Marker', cursive;
+  text-shadow: 2px 2px 4px rgba(179, 136, 255, 0.3);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #d7dadc;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #343536;
+  border-radius: 4px;
+  background-color: #1a1a1b;
+  color: #d7dadc;
+  font-size: 16px;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #b388ff;
+  box-shadow: 0 0 0 2px rgba(179, 136, 255, 0.2);
+}
+
+.error-message {
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  color: #ff6b6b;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.submit-btn,
+.cancel-btn {
+  padding: 10px 24px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submit-btn {
+  background-color: #b388ff;
+  color: white;
+  border: none;
+}
+
+.submit-btn:hover {
+  background-color: #9575cd;
+  transform: translateY(-1px);
+}
+
+.cancel-btn {
+  background-color: transparent;
+  color: #d7dadc;
+  border: 1px solid #343536;
+}
+
+.cancel-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .create-post-container {
+    padding: 12px;
+  }
+
+  .create-post-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .create-post-container {
+    padding: 8px;
+  }
+
+  .create-post-card {
+    padding: 1rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .submit-btn,
+  .cancel-btn {
+    width: 100%;
+  }
+}
+
+.file-input {
+  margin-bottom: 12px;
+}
+
+.image-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.image-preview-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.image-preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-image {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.2s ease;
+}
+
+.remove-image:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
+} 

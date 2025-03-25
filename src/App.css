@@ -39,6 +39,7 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
+  flex-wrap: nowrap;
 }
 
 .header-left {
@@ -67,6 +68,7 @@ header {
   margin-right: 20px;
   transform: rotate(-2deg);
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .logo:hover {
@@ -165,7 +167,15 @@ header {
 
 .community-info h2 {
   color: #b388ff;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
+  font-family: 'Permanent Marker', cursive;
+  text-shadow: 2px 2px 4px rgba(179, 136, 255, 0.3);
+}
+
+.community-info p {
+  color: #d7dadc;
+  margin-bottom: 16px;
+  line-height: 1.4;
 }
 
 .create-post-btn {
@@ -190,6 +200,9 @@ header {
   background-color: #272729;
   border-radius: 8px;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .post {
@@ -198,6 +211,13 @@ header {
   padding: 16px;
   background-color: #1a1a1b;
   border-radius: 4px;
+  margin-bottom: 16px;
+  border: 1px solid #343536;
+  transition: border-color 0.2s ease;
+}
+
+.post:hover {
+  border-color: #4a4a4b;
 }
 
 .post-votes {
@@ -205,6 +225,9 @@ header {
   flex-direction: column;
   align-items: center;
   gap: 4px;
+  padding: 4px;
+  border-radius: 4px;
+  min-width: 40px;
 }
 
 .post-votes button {
@@ -212,12 +235,55 @@ header {
   border: none;
   color: #717171;
   cursor: pointer;
-  font-size: 20px;
-  transition: color 0.2s ease;
+  font-size: 24px;
+  padding: 4px;
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
 }
 
 .post-votes button:hover {
+  background-color: rgba(179, 136, 255, 0.1);
   color: #b388ff;
+}
+
+.post-votes button.voted {
+  color: #b388ff;
+  background-color: rgba(179, 136, 255, 0.1);
+}
+
+.post-votes span {
+  font-size: 14px;
+  font-weight: bold;
+  color: #d7dadc;
+}
+
+.post-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.post-content h3 {
+  color: #d7dadc;
+  margin-bottom: 8px;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.post-content p {
+  color: #b8b8b8;
+  margin-bottom: 12px;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.post-meta {
+  color: #717171;
+  font-size: 12px;
 }
 
 .right-sidebar {
@@ -226,18 +292,39 @@ header {
   padding: 16px;
 }
 
+.rules {
+  color: #d7dadc;
+}
+
 .rules h3 {
   color: #b388ff;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  font-family: 'Permanent Marker', cursive;
+  text-shadow: 2px 2px 4px rgba(179, 136, 255, 0.3);
 }
 
 .rules ol {
   padding-left: 20px;
-  color: #d7dadc;
+  list-style-position: outside;
 }
 
 .rules li {
-  margin-bottom: 8px;
+  margin-bottom: 16px;
+  line-height: 1.4;
+  font-size: 14px;
+}
+
+.rules li strong {
+  color: #b388ff;
+  display: block;
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+
+.rules li br {
+  display: block;
+  content: "";
+  margin-top: 4px;
 }
 
 /* Auth Styles */
@@ -333,4 +420,161 @@ button:hover {
 
 .auth-buttons .profile-btn {
   min-width: 100px;
-} 
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .main-content {
+    grid-template-columns: 1fr;
+    padding: 12px;
+    gap: 16px;
+  }
+
+  .sidebar {
+    min-height: auto;
+    order: 2;
+  }
+
+  .feed {
+    order: 1;
+  }
+
+  .right-sidebar {
+    order: 3;
+  }
+
+  header {
+    padding: 0 12px;
+  }
+
+  .logo {
+    font-size: 2rem;
+    margin-right: 12px;
+  }
+
+  .header-right {
+    gap: 8px;
+  }
+
+  .username {
+    font-size: 12px;
+    padding: 3px 6px;
+    margin-right: 8px;
+  }
+
+  .profile-btn {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
+  .auth-buttons .profile-btn {
+    min-width: 80px;
+  }
+
+  .auth-card {
+    padding: 1.5rem;
+  }
+
+  .post {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .post-votes button {
+    font-size: 20px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .post-content h3 {
+    font-size: 16px;
+  }
+
+  .rules li {
+    margin-bottom: 12px;
+    font-size: 13px;
+  }
+
+  .rules li strong {
+    font-size: 14px;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .logo {
+    font-size: 1.75rem;
+  }
+
+  .main-content {
+    padding: 8px;
+    gap: 12px;
+  }
+
+  .post {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .auth-card {
+    padding: 1rem;
+  }
+
+  .profile-btn {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .auth-buttons {
+    gap: 8px;
+  }
+
+  .auth-buttons .profile-btn {
+    min-width: 70px;
+  }
+
+  .username {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .post-votes {
+    min-width: 32px;
+  }
+
+  .post-votes button {
+    font-size: 18px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .post-content h3 {
+    font-size: 15px;
+  }
+
+  .post-content p {
+    font-size: 14px;
+  }
+}
+
+/* Ensure the header buttons stack properly on very small screens */
+@media (max-width: 360px) {
+  .auth-buttons {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .header-right {
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+  }
+
+  .username {
+    margin-right: 0;
+  }
+}
+
+/* Add meta viewport tag to ensure proper scaling */ 
