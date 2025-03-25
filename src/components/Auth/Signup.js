@@ -14,7 +14,7 @@ export default function Signup() {
   const { signup } = useAuth();
   const navigate = useNavigate();
 
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -45,7 +45,7 @@ export default function Signup() {
       setError('Failed to create an account: ' + error.message);
     }
     setLoading(false);
-  }
+  };
 
   return (
     <div className="auth-container">
