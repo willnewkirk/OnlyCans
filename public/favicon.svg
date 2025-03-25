@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Spray can body -->
+  <rect x="8" y="12" width="16" height="18" rx="2" fill="#b388ff"/>
+  <!-- Spray can top -->
+  <rect x="10" y="8" width="12" height="4" rx="1" fill="#9575cd"/>
+  <!-- Nozzle -->
+  <rect x="14" y="4" width="4" height="4" rx="1" fill="#b388ff"/>
+  <!-- Spray effect -->
+  <circle cx="16" cy="2" r="1" fill="#b388ff" opacity="0.8"/>
+  <circle cx="14" cy="1" r="0.5" fill="#b388ff" opacity="0.6"/>
+  <circle cx="18" cy="1" r="0.5" fill="#b388ff" opacity="0.6"/>
+</svg> 
