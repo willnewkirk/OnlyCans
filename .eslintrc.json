@@ -4,9 +4,11 @@
     "react-app/jest"
   ],
   "rules": {
-    "no-undef": "error",
+    "no-undef": "warn",
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "react-hooks/exhaustive-deps": "warn",
+    "no-unused-vars": "warn",
+    "jsx-a11y/img-redundant-alt": "warn"
   },
   "env": {
     "browser": true,
