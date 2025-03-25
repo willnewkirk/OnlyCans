@@ -10,19 +10,43 @@ export default function Signup() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [usernameError, setUsernameError] = useState('');
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
 
+  const validateUsername = (username) => {
+    if (username.length < 3) {
+      setUsernameError('Username must be at least 3 characters long');
+      return false;
+    }
+    if (username.length > 20) {
+      setUsernameError('Username must be less than 20 characters');
+      return false;
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      setUsernameError('Username can only contain letters, numbers, and underscores');
+      return false;
+    }
+    setUsernameError('');
+    return true;
+  };
+
+  const handleUsernameChange = (e) => {
+    const newUsername = e.target.value;
+    setUsername(newUsername);
+    validateUsername(newUsername);
+  };
+
   async function handleSubmit(e) {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      return setError('Passwords do not match');
+    if (!validateUsername(username)) {
+      return;
     }
 
-    if (username.length < 3) {
-      return setError('Username must be at least 3 characters long');
+    if (password !== confirmPassword) {
+      return setError('Passwords do not match');
     }
 
     try {
@@ -53,41 +77,56 @@ export default function Signup() {
         <h2>Sign Up</h2>
         {error && <div className="error">{error}</div>}
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            minLength={3}
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-          <button disabled={loading} type="submit">
+          <div className="form-group">
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={handleUsernameChange}
+              required
+              minLength={3}
+              maxLength={20}
+              pattern="[a-zA-Z0-9_]+"
+              className={usernameError ? 'input-error' : ''}
+            />
+            {usernameError && <div className="input-error-message">{usernameError}</div>}
+            <div className="input-help-text">
+              Choose a unique username (3-20 characters, letters, numbers, and underscores only)
+            </div>
+          </div>
+          <div className="form-group">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button disabled={loading || usernameError} type="submit">
             Sign Up
           </button>
         </form>
-        <p style={{ marginTop: '1rem', textAlign: 'center', color: '#d7dadc' }}>
-          Already have an account? <Link to="/login" style={{ color: '#b388ff', textDecoration: 'none' }}>Log In</Link>
+        <p className="auth-link">
+          Already have an account? <Link to="/login">Log In</Link>
         </p>
       </div>
     </div>
