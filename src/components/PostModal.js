@@ -10,15 +10,9 @@ export default function PostModal({ post, onClose, onVote, onComment, onDeletePo
     e.preventDefault();
     if (!newComment.trim()) return;
 
-    const comment = {
-      id: Date.now().toString(),
-      content: newComment.trim(),
-      author: currentUser.displayName || 'Anonymous User',
-      authorId: currentUser.uid,
-      timestamp: Date.now()
-    };
-
-    onComment(post.id, comment);
+    onComment(post.id, {
+      content: newComment.trim()
+    });
     setNewComment('');
   };
 
@@ -26,11 +20,12 @@ export default function PostModal({ post, onClose, onVote, onComment, onDeletePo
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={e => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose}>&times;</button>
+        
         <div className="modal-header">
           <div className="modal-header-left">
-            <span className="modal-author">{post.author}</span>
+            <span className="modal-author">{post.authorName}</span>
             <span className="modal-timestamp">
-              {new Date(Number(post.timestamp)).toLocaleDateString('en-US', {
+              {new Date(post.timestamp).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric',
@@ -38,33 +33,19 @@ export default function PostModal({ post, onClose, onVote, onComment, onDeletePo
                 minute: '2-digit'
               })}
             </span>
-            {post.authorId === currentUser?.uid && (
-              <button 
-                className="modal-delete-post"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDeletePost(post.id);
-                }}
-              >
-                🗑️
-              </button>
-            )}
           </div>
         </div>
-        
+
+        <h2 className="modal-title">{post.title}</h2>
         <p className="modal-text">{post.content}</p>
         
-        {post.images && post.images.length > 0 && (
+        {post.imageUrl && (
           <div className="modal-images">
-            {post.images.map((image, index) => (
-              <img 
-                key={index} 
-                src={image} 
-                alt={`Post image ${index + 1}`} 
-                className="modal-image"
-                onClick={(e) => e.stopPropagation()}
-              />
-            ))}
+            <img 
+              src={post.imageUrl} 
+              alt="Post content" 
+              className="modal-image"
+            />
           </div>
         )}
         
@@ -72,21 +53,16 @@ export default function PostModal({ post, onClose, onVote, onComment, onDeletePo
           <div className="modal-vote-buttons">
             <button 
               className={`modal-vote-button ${post.userVotes?.[currentUser?.uid] === 'up' ? 'active' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onVote(post.id, 'up');
-              }}
+              onClick={() => onVote(post.id, 'up')}
             >
-              {post.userVotes?.[currentUser?.uid] === 'up' ? '👍' : '👍'}
+              👍
             </button>
+            <span>{post.votes || 0}</span>
             <button 
               className={`modal-vote-button ${post.userVotes?.[currentUser?.uid] === 'down' ? 'active' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onVote(post.id, 'down');
-              }}
+              onClick={() => onVote(post.id, 'down')}
             >
-              {post.userVotes?.[currentUser?.uid] === 'down' ? '👎' : '👎'}
+              👎
             </button>
           </div>
           <span className="modal-comment-count">
@@ -112,7 +88,7 @@ export default function PostModal({ post, onClose, onVote, onComment, onDeletePo
                 <div className="comment-header">
                   <span className="comment-author">{comment.author}</span>
                   <span className="comment-timestamp">
-                    {new Date(Number(comment.timestamp)).toLocaleDateString('en-US', {
+                    {new Date(comment.timestamp).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',
                       hour: '2-digit',

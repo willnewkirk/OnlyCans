@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { db } from './firebase';
+import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, orderBy, onSnapshot, serverTimestamp, increment, arrayUnion } from 'firebase/firestore';
 import Login from './components/Auth/Login';
 import Signup from './components/Auth/Signup';
 import CreatePost from './components/CreatePost';
@@ -24,260 +26,368 @@ function Header() {
   };
 
   return (
-    <header>
-      <div className="header-left">
-        <Link to="/" className="logo">OnlyCans</Link>
-      </div>
-      <div className="header-right">
-        {currentUser ? (
-          <>
-            <span className="username">{currentUser.displayName || 'Anonymous User'}</span>
-            <button className="profile-btn" onClick={handleLogout}>Logout</button>
-          </>
-        ) : (
-          <div className="auth-buttons">
-            <Link to="/login">
-              <button className="profile-btn">Login</button>
-            </Link>
-            <Link to="/signup">
-              <button className="profile-btn">Sign Up</button>
-            </Link>
-          </div>
-        )}
+    <header className="header">
+      <div className="header-content">
+        <div className="logo-section">
+          <h1 className="logo">OnlyCans</h1>
+        </div>
+        <div className="search-bar">
+          <input type="text" placeholder="Search OnlyCans" />
+        </div>
+        <div className="user-controls">
+          {currentUser ? (
+            <>
+              <span className="username">{currentUser.displayName || 'Anonymous User'}</span>
+              <button className="profile-btn" onClick={handleLogout}>Logout</button>
+            </>
+          ) : (
+            <button className="profile-btn" onClick={() => window.location.href = '/login'}>Login</button>
+          )}
+        </div>
       </div>
     </header>
   );
 }
 
-function ProtectedMainContent({ posts, onVote, onDelete }) {
+function ProtectedRoute({ children }) {
   const { currentUser } = useAuth();
-  console.log('ProtectedMainContent rendering, currentUser:', currentUser);
+  
   if (!currentUser) {
-    console.log('No current user, redirecting to login');
     return <Navigate to="/login" />;
   }
-  return <MainContent posts={posts} onVote={onVote} onDelete={onDelete} />;
+  
+  return children;
 }
 
 function AppContent() {
   const { currentUser } = useAuth();
   const [posts, setPosts] = useState([]);
-  const [selectedPost, setSelectedPost] = useState(null);
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
-
-  // Add debugging
-  console.log('AppContent rendering, currentUser:', currentUser);
+  const [error, setError] = useState(null);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('Loading posts from localStorage...');
-    const savedPosts = JSON.parse(localStorage.getItem('posts') || '[]');
-    console.log('Loaded posts:', savedPosts);
-    setPosts(savedPosts);
-  }, []);
+    // Load posts from localStorage first for immediate display
+    const savedPosts = localStorage.getItem('posts');
+    if (savedPosts) {
+      try {
+        const parsedPosts = JSON.parse(savedPosts);
+        setPosts(parsedPosts);
+      } catch (err) {
+        console.error('Error loading posts from localStorage:', err);
+      }
+    }
 
-  const handleCreatePost = (newPost) => {
-    console.log('Creating new post:', newPost);
-    const updatedPosts = [newPost, ...posts];
-    setPosts(updatedPosts);
-    localStorage.setItem('posts', JSON.stringify(updatedPosts));
-    setIsCreatePostOpen(false);
-  };
-
-  const handleVote = (postId, voteType) => {
-    console.log('Handling vote:', { postId, voteType });
-    const updatedPosts = posts.map(post => {
-      if (post.id === postId) {
-        const currentVote = post.userVotes?.[currentUser?.uid];
-        let newVoteCount = post.votes || 0;
-
-        if (currentVote === voteType) {
-          // Remove vote
-          newVoteCount -= voteType === 'up' ? 1 : -1;
-          delete post.userVotes[currentUser.uid];
-        } else if (currentVote) {
-          // Change vote
-          newVoteCount -= currentVote === 'up' ? 1 : -1;
-          newVoteCount += voteType === 'up' ? 1 : -1;
-          post.userVotes[currentUser.uid] = voteType;
-        } else {
-          // First vote
-          newVoteCount += voteType === 'up' ? 1 : -1;
-          post.userVotes = { ...post.userVotes, [currentUser.uid]: voteType };
+    // Set up Firestore listener
+    const postsRef = collection(db, 'posts');
+    const postsQuery = query(postsRef, orderBy('timestamp', 'desc'));
+    
+    const unsubscribe = onSnapshot(postsQuery, 
+      (snapshot) => {
+        try {
+          const loadedPosts = snapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              ...data,
+              timestamp: data.timestamp?.toMillis() || Date.now()
+            };
+          });
+          
+          // Only update if we have posts
+          if (loadedPosts.length > 0) {
+            console.log('Successfully loaded posts:', loadedPosts.length);
+            setPosts(loadedPosts);
+            localStorage.setItem('posts', JSON.stringify(loadedPosts));
+          }
+        } catch (err) {
+          console.error('Error processing posts:', err);
+          setError('Failed to process posts');
         }
-
-        return { ...post, votes: newVoteCount };
+      },
+      (error) => {
+        console.error('Posts listener error:', error);
+        setError('Failed to load posts: ' + error.message);
       }
-      return post;
-    });
-
-    setPosts(updatedPosts);
-    localStorage.setItem('posts', JSON.stringify(updatedPosts));
-  };
-
-  const handleDelete = (postId) => {
-    console.log('Deleting post:', postId);
-    const updatedPosts = posts.filter(post => post.id !== postId);
-    setPosts(updatedPosts);
-    localStorage.setItem('posts', JSON.stringify(updatedPosts));
-    if (selectedPost?.id === postId) {
-      setSelectedPost(null);
-    }
-  };
-
-  const handleComment = (postId, comment) => {
-    console.log('Adding comment:', { postId, comment });
-    const updatedPosts = posts.map(post => {
-      if (post.id === postId) {
-        return {
-          ...post,
-          comments: [...(post.comments || []), { ...comment, id: Date.now().toString() }]
-        };
-      }
-      return post;
-    });
-
-    setPosts(updatedPosts);
-    localStorage.setItem('posts', JSON.stringify(updatedPosts));
-  };
-
-  const handleDeleteComment = (postId, commentId) => {
-    console.log('Deleting comment:', { postId, commentId });
-    const updatedPosts = posts.map(post => {
-      if (post.id === postId) {
-        return {
-          ...post,
-          comments: post.comments.filter(comment => comment.id !== commentId)
-        };
-      }
-      return post;
-    });
-
-    setPosts(updatedPosts);
-    localStorage.setItem('posts', JSON.stringify(updatedPosts));
-  };
-
-  const ProtectedMainContent = () => {
-    console.log('ProtectedMainContent rendering, currentUser:', currentUser);
-    if (!currentUser) {
-      console.log('No current user, redirecting to login');
-      return <Navigate to="/login" />;
-    }
-    return (
-      <MainContent
-        posts={posts}
-        onVote={handleVote}
-        onComment={handleComment}
-        onDeleteComment={handleDeleteComment}
-        onDelete={handleDelete}
-        onCreatePost={() => setIsCreatePostOpen(true)}
-        selectedPost={selectedPost}
-        setSelectedPost={setSelectedPost}
-      />
     );
+
+    // Cleanup function
+    return () => {
+      console.log('Cleaning up posts listener');
+      unsubscribe();
+    };
+  }, []); // Empty dependency array means this effect runs once on mount
+
+  // Add a separate effect to handle localStorage updates
+  useEffect(() => {
+    if (posts.length > 0) {
+      localStorage.setItem('posts', JSON.stringify(posts));
+    }
+  }, [posts]);
+
+  const handleCreatePost = async (newPost) => {
+    try {
+      // Close the modal immediately
+      setIsCreatePostOpen(false);
+      
+      if (!currentUser) {
+        setError('You must be logged in to create a post');
+        return;
+      }
+
+      const post = {
+        title: newPost.title || '',
+        content: newPost.content || '',
+        imageUrl: newPost.imageUrl || '',
+        timestamp: serverTimestamp(),
+        authorId: currentUser.uid,
+        authorName: currentUser.displayName || 'Anonymous User',
+        votes: 0,
+        userVotes: {},
+        comments: []
+      };
+      
+      if (!post.title.trim()) {
+        throw new Error('Post title is required');
+      }
+      
+      if (!post.content.trim() && !post.imageUrl) {
+        throw new Error('Post must have either content or an image');
+      }
+
+      console.log('Creating post:', post);
+      const postsRef = collection(db, 'posts');
+      const docRef = await addDoc(postsRef, post);
+      console.log('Post created with ID:', docRef.id);
+
+      // Clear any existing errors
+      setError(null);
+    } catch (err) {
+      console.error('Error creating post:', err);
+      setError(err.message || 'Failed to create post');
+    }
   };
+
+  const handleVote = async (postId, voteType) => {
+    if (!currentUser) {
+      setError('You must be logged in to vote');
+      return;
+    }
+
+    try {
+      const postRef = doc(db, 'posts', postId);
+      const post = posts.find(p => p.id === postId);
+      if (!post) {
+        setError('Post not found');
+        return;
+      }
+
+      const currentVote = post.userVotes?.[currentUser.uid];
+      const currentVoteCount = post.votes || 0;
+
+      let updates = {};
+      if (currentVote === voteType) {
+        // Remove vote if clicking the same button
+        updates = {
+          votes: currentVoteCount - 1,
+          [`userVotes.${currentUser.uid}`]: null
+        };
+      } else if (!currentVote) {
+        // New vote
+        updates = {
+          votes: currentVoteCount + 1,
+          [`userVotes.${currentUser.uid}`]: voteType
+        };
+      } else {
+        // Change vote
+        updates = {
+          votes: currentVoteCount + 2, // Remove old vote (-1) and add new vote (+1)
+          [`userVotes.${currentUser.uid}`]: voteType
+        };
+      }
+
+      await updateDoc(postRef, updates);
+
+      // Update local state
+      setPosts(posts.map(p => {
+        if (p.id === postId) {
+          return {
+            ...p,
+            votes: updates.votes,
+            userVotes: {
+              ...p.userVotes,
+              [currentUser.uid]: updates[`userVotes.${currentUser.uid}`]
+            }
+          };
+        }
+        return p;
+      }));
+    } catch (error) {
+      console.error('Error updating vote:', error);
+      setError('Failed to update vote: ' + error.message);
+    }
+  };
+
+  const handleDelete = async (postId) => {
+    if (!currentUser) {
+      setError('You must be logged in to delete posts');
+      return;
+    }
+
+    try {
+      // Get the post to check ownership
+      const post = posts.find(p => p.id === postId);
+      if (!post) {
+        setError('Post not found');
+        return;
+      }
+
+      // Log the user IDs for debugging
+      console.log('Current user ID:', currentUser.uid);
+      console.log('Post author ID:', post.authorId);
+
+      // Check if current user is the author
+      if (post.authorId !== currentUser.uid) {
+        setError('You can only delete your own posts');
+        return;
+      }
+
+      const postRef = doc(db, 'posts', postId);
+      
+      // Log the post reference for debugging
+      console.log('Attempting to delete post:', postId);
+      
+      await deleteDoc(postRef);
+      
+      // Update local state
+      const updatedPosts = posts.filter(p => p.id !== postId);
+      setPosts(updatedPosts);
+      
+      // Close modal if post was being viewed
+      if (selectedPost?.id === postId) {
+        setSelectedPost(null);
+      }
+
+      // Clear any existing errors
+      setError(null);
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      setError('Failed to delete post: ' + error.message);
+    }
+  };
+
+  const handleComment = async (postId, comment) => {
+    if (!currentUser) return;
+
+    try {
+      const postRef = doc(db, 'posts', postId);
+      const newComment = {
+        id: Date.now().toString(),
+        content: comment.content,
+        author: currentUser.displayName || 'Anonymous User',
+        authorId: currentUser.uid,
+        timestamp: Date.now()
+      };
+
+      await updateDoc(postRef, {
+        comments: arrayUnion(newComment)
+      });
+
+      // Update local state
+      setPosts(posts.map(p => {
+        if (p.id === postId) {
+          return {
+            ...p,
+            comments: [...(p.comments || []), newComment]
+          };
+        }
+        return p;
+      }));
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      setError('Failed to add comment');
+    }
+  };
+
+  const handleDeleteComment = async (postId, commentId) => {
+    if (!currentUser) return;
+
+    try {
+      const postRef = doc(db, 'posts', postId);
+      const post = posts.find(p => p.id === postId);
+      const updatedComments = post.comments.filter(c => c.id !== commentId);
+
+      await updateDoc(postRef, {
+        comments: updatedComments
+      });
+
+      // Update local state
+      setPosts(posts.map(p => {
+        if (p.id === postId) {
+          return {
+            ...p,
+            comments: updatedComments
+          };
+        }
+        return p;
+      }));
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      setError('Failed to delete comment');
+    }
+  };
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <h1>Error</h1>
+        <p>{error}</p>
+        <button onClick={() => setError(null)}>Dismiss</button>
+      </div>
+    );
+  }
 
   return (
-    <div className="App">
+    <>
       <Header />
-      <div className="app-container">
-        <Routes>
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/create-post" element={
-            <ProtectedRoute>
-              <CreatePost onPostCreated={(post) => {
-                handleCreatePost(post);
-                navigate('/');
-              }} />
-            </ProtectedRoute>
-          } />
-          <Route path="/" element={<ProtectedMainContent />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </div>
+      <MainContent
+        currentUser={currentUser}
+        posts={posts}
+        onVote={handleVote}
+        onDelete={handleDelete}
+        onCreatePost={() => setIsCreatePostOpen(true)}
+        onComment={handleComment}
+        onDeleteComment={handleDeleteComment}
+        selectedPost={selectedPost}
+        onSelectPost={setSelectedPost}
+      />
       {isCreatePostOpen && (
         <CreatePost
           onClose={() => setIsCreatePostOpen(false)}
           onSubmit={handleCreatePost}
         />
       )}
-    </div>
+    </>
   );
 }
 
 function App() {
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        // Wait for a small delay to ensure Firebase is ready
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setIsInitialized(true);
-      } catch (err) {
-        console.error('Initialization error:', err);
-        setError(err.message);
-      }
-    };
-
-    initializeApp();
-  }, []);
-
-  if (!isInitialized) {
-    return (
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        backgroundColor: '#2d2d2d',
-        color: '#e0e0e0',
-        padding: '20px',
-        textAlign: 'center'
-      }}>
-        <h2>Loading OnlyCans...</h2>
-        {error && (
-          <div style={{
-            marginTop: '20px',
-            color: '#ff6b6b',
-            maxWidth: '600px'
-          }}>
-            <p>Error: {error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              style={{
-                marginTop: '10px',
-                padding: '8px 16px',
-                backgroundColor: '#4a90e2',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              Retry
-            </button>
-          </div>
-        )}
-      </div>
-    );
-  }
-
   return (
     <AuthProvider>
-      <AppContent />
+      <div className="App">
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/" element={
+            <ProtectedRoute>
+              <AppContent />
+            </ProtectedRoute>
+          } />
+        </Routes>
+      </div>
     </AuthProvider>
   );
-}
-
-function ProtectedRoute({ children }) {
-  const { currentUser } = useAuth();
-  if (!currentUser) {
-    return <Navigate to="/login" />;
-  }
-  return children;
 }
 
 export default App; 

@@ -4,37 +4,16 @@ import { useAuth } from '../contexts/AuthContext';
 import PostModal from './PostModal';
 import './MainContent.css';
 
-export default function MainContent({ posts, onVote, onDelete }) {
+export default function MainContent({ posts, onVote, onDelete, onCreatePost, onComment, onDeleteComment }) {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [selectedPost, setSelectedPost] = useState(null);
 
-  const handleCommentSubmit = (postId, newComment) => {
-    const updatedPosts = posts.map(post => {
-      if (post.id === postId) {
-        return {
-          ...post,
-          comments: [...(post.comments || []), newComment]
-        };
-      }
-      return post;
-    });
-
-    onVote(updatedPosts);
-  };
-
-  const handleDeleteComment = (postId, commentId) => {
-    const updatedPosts = posts.map(post => {
-      if (post.id === postId) {
-        return {
-          ...post,
-          comments: (post.comments || []).filter(comment => comment.id !== commentId)
-        };
-      }
-      return post;
-    });
-
-    onVote(updatedPosts);
+  const truncateText = (text, maxLength = 4) => {
+    if (text && text.length > maxLength) {
+      return text.substring(0, maxLength) + '...';
+    }
+    return text;
   };
 
   const handlePostClick = (post) => {
@@ -50,19 +29,6 @@ export default function MainContent({ posts, onVote, onDelete }) {
     setSelectedPost(null);
   };
 
-  const handleVote = (postId, voteType) => {
-    const updatedPosts = posts.map(post => {
-      if (post.id === postId) {
-        return {
-          ...post,
-          [voteType]: (post[voteType] || 0) + 1
-        };
-      }
-      return post;
-    });
-    onVote(updatedPosts);
-  };
-
   return (
     <div className="main-content">
       <div className="sidebar">
@@ -71,7 +37,7 @@ export default function MainContent({ posts, onVote, onDelete }) {
           <p>Share your favorite cans with the community!</p>
           <button 
             className="create-post-btn"
-            onClick={() => navigate('/create-post')}
+            onClick={onCreatePost}
           >
             Create Post
           </button>
@@ -91,10 +57,10 @@ export default function MainContent({ posts, onVote, onDelete }) {
               onClick={() => handlePostClick(post)}
             >
               <div className="post-header">
-                <span className="post-author">{post.author}</span>
+                <span className="post-author">{post.authorName}</span>
                 <div className="post-header-actions">
                   <span className="post-timestamp">
-                    {new Date(Number(post.timestamp)).toLocaleDateString('en-US', {
+                    {new Date(post.timestamp).toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: 'short',
                       day: 'numeric',
@@ -116,19 +82,17 @@ export default function MainContent({ posts, onVote, onDelete }) {
                 </div>
               </div>
               
-              <p className="post-content">{post.content}</p>
+              <h3 className="post-title">{truncateText(post.title)}</h3>
+              <p className="post-content">{truncateText(post.content)}</p>
               
-              {post.images && post.images.length > 0 && (
+              {post.imageUrl && (
                 <div className="post-images">
-                  {post.images.map((image, index) => (
-                    <img 
-                      key={index} 
-                      src={image} 
-                      alt={`Post image ${index + 1}`} 
-                      className="post-image"
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  ))}
+                  <img 
+                    src={post.imageUrl} 
+                    alt="Post content" 
+                    className="post-image"
+                    onClick={(e) => e.stopPropagation()}
+                  />
                 </div>
               )}
               
@@ -141,8 +105,9 @@ export default function MainContent({ posts, onVote, onDelete }) {
                       onVote(post.id, 'up');
                     }}
                   >
-                    {post.userVotes?.[currentUser?.uid] === 'up' ? '👍' : '👍'}
+                    👍
                   </button>
+                  <span>{post.votes || 0}</span>
                   <button 
                     className={`vote-button ${post.userVotes?.[currentUser?.uid] === 'down' ? 'active' : ''}`}
                     onClick={(e) => {
@@ -150,7 +115,7 @@ export default function MainContent({ posts, onVote, onDelete }) {
                       onVote(post.id, 'down');
                     }}
                   >
-                    {post.userVotes?.[currentUser?.uid] === 'down' ? '👎' : '👎'}
+                    👎
                   </button>
                 </div>
                 <span className="comment-count">
@@ -195,9 +160,9 @@ export default function MainContent({ posts, onVote, onDelete }) {
           post={selectedPost}
           onClose={handleCloseModal}
           onVote={onVote}
-          onComment={handleCommentSubmit}
+          onComment={onComment}
           onDeletePost={handleDeletePost}
-          onDeleteComment={handleDeleteComment}
+          onDeleteComment={onDeleteComment}
         />
       )}
     </div>

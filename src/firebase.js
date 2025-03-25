@@ -1,18 +1,19 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 
 // Add debugging
 console.log('Initializing Firebase...');
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID
+  apiKey: "AIzaSyD_aiAK0VZ30r3GVNzIcPnqBSwbHjlVqn8",
+  authDomain: "onlycans-d9287.firebaseapp.com",
+  projectId: "onlycans-d9287",
+  storageBucket: "onlycans-d9287.firebasestorage.app",
+  messagingSenderId: "78236596885",
+  appId: "1:78236596885:web:c71df96ecf5492ef0b399c"
 };
 
 // Log config (without sensitive values)
@@ -29,6 +30,7 @@ console.log('Firebase config:', {
 let app;
 let auth;
 let db;
+let storage;
 let analytics = null;
 
 try {
@@ -43,6 +45,10 @@ try {
   // Initialize Firestore
   db = getFirestore(app);
   console.log('Firestore initialized');
+
+  // Initialize Storage
+  storage = getStorage(app);
+  console.log('Firebase Storage initialized');
 
   // Initialize Analytics only if supported
   isSupported().then(yes => {
@@ -61,5 +67,5 @@ try {
   throw new Error('Failed to initialize Firebase: ' + error.message);
 }
 
-export { auth, db, analytics };
+export { auth, db, storage, analytics };
 export default app; 

@@ -1,117 +1,86 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import './CreatePost.css';
 
-export default function CreatePost({ onPostCreated }) {
+function CreatePost({ onSubmit, onClose }) {
+  const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [images, setImages] = useState([]);
+  const [imageUrl, setImageUrl] = useState('');
   const [error, setError] = useState('');
-  const { currentUser } = useAuth();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length + images.length > 5) {
-      setError('You can only upload up to 5 images');
-      return;
-    }
-
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImages(prev => [...prev, reader.result]);
-      };
-      reader.readAsDataURL(file);
-    });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
+    setError('');
 
     try {
-      // Validate images
-      if (images.length > 5) {
-        throw new Error('You can only upload up to 5 images');
+      // Validate inputs
+      if (!title.trim()) {
+        setError('Title is required');
+        return;
       }
 
-      // Create new post
-      const newPost = {
-        content,
-        images,
-        authorId: currentUser.uid,
-        author: currentUser.displayName || 'Anonymous User'
+      if (!content.trim() && !imageUrl.trim()) {
+        setError('Please add either text content or an image URL');
+        return;
+      }
+
+      // Create post object
+      const post = {
+        title: title.trim(),
+        content: content.trim(),
+        imageUrl: imageUrl.trim()
       };
 
-      // Call the parent's handler to create the post
-      onPostCreated(newPost);
-      
-      // Navigate back to home
-      navigate('/');
+      await onSubmit(post);
+      onClose();
     } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+      setError(err.message || 'Failed to create post');
     }
   };
 
-  const removeImage = (index) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
-  };
-
   return (
-    <div className="create-post-container">
-      <div className="create-post-card">
-        <h2>Create a Post</h2>
+    <div className="create-post-modal">
+      <div className="create-post-content">
+        <h2>Create New Post</h2>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Content</label>
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Share your street art story..."
-              rows={6}
-              required
+            <label htmlFor="title">Title</label>
+            <input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter post title"
             />
           </div>
           <div className="form-group">
-            <label>Images (up to 5)</label>
-            <input
-              type="file"
-              onChange={handleImageChange}
-              accept="image/*"
-              multiple
-              className="file-input"
+            <label htmlFor="content">Content</label>
+            <textarea
+              id="content"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="What's on your mind?"
+              rows="4"
             />
-            <div className="image-preview">
-              {images.map((image, index) => (
-                <div key={index} className="image-preview-item">
-                  <img src={image} alt={`Preview ${index + 1}`} />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(index)}
-                    className="remove-image"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
           </div>
-          <div className="form-actions">
-            <button type="button" onClick={() => navigate('/')} className="cancel-btn">
-              Cancel
-            </button>
-            <button type="submit" className="submit-btn">
-              Post
-            </button>
+          <div className="form-group">
+            <label htmlFor="imageUrl">Image URL (optional)</label>
+            <input
+              type="text"
+              id="imageUrl"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              placeholder="Enter image URL"
+            />
+          </div>
+          <div className="button-group">
+            <button type="submit" className="submit-btn">Create Post</button>
+            <button type="button" className="cancel-btn" onClick={onClose}>Cancel</button>
           </div>
         </form>
       </div>
     </div>
   );
-} 
+}
+
+export default CreatePost; 
