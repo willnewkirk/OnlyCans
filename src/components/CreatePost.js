@@ -172,7 +172,7 @@ export default function CreatePost({ onClose, onSubmit }) {
             <button type="button" className="cancel-btn" onClick={onClose} disabled={loading}>
               Cancel
             </button>
-            <button type="submit" disabled={loading || !title.trim() || !content.trim() || !imageUrl.trim()}>
+            <button type="submit" disabled={loading || !title.trim() || !content.trim()}>
               {loading ? 'Creating...' : 'Create Post'}
             </button>
           </div>
