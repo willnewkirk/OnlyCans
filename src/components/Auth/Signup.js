@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { updateProfile } from 'firebase/auth';
+import { db } from '../../firebase';
+import { doc, setDoc } from 'firebase/firestore';
 import './Auth.css';
 
 export default function Signup() {
@@ -31,6 +33,14 @@ export default function Signup() {
       const userCredential = await signup(email, password);
       const user = userCredential.user;
       
+      // Create user document in Firestore
+      await setDoc(doc(db, 'users', user.uid), {
+        username: username,
+        email: email,
+        displayName: username,
+        createdAt: new Date().toISOString()
+      });
+
       // Update the user's profile with the username
       await updateProfile(user, {
         displayName: username

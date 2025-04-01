@@ -1,0 +1,263 @@
+.main-content {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.sidebar {
+  flex: 0 0 300px;
+  position: sticky;
+  top: 2rem;
+  height: fit-content;
+}
+
+.feed {
+  flex: 1;
+  max-width: 800px;
+  width: 100%;
+}
+
+.feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #1a1a1a;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.feed-header h2 {
+  margin: 0;
+  color: #ffffff;
+}
+
+.back-button {
+  background-color: #9C27B0;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 1.1rem;
+}
+
+.back-button:hover {
+  background-color: #7B1FA2;
+  transform: translateY(-2px);
+}
+
+.feed .post {
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  border: none;
+}
+
+.feed .post:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.feed .post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.feed .post-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.feed .post-author {
+  font-weight: 600;
+  color: #9C27B0;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.feed .post-author:hover {
+  color: #7B1FA2;
+}
+
+.feed .post-author.admin {
+  color: #f44336;
+}
+
+.feed .post-author.mod {
+  color: #2196F3;
+}
+
+.feed .post-timestamp {
+  color: #b0b0b0;
+  font-size: 0.9rem;
+}
+
+.feed .post-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  color: #ffffff;
+}
+
+.feed .post-content {
+  margin: 0 0 1rem 0;
+  color: #e0e0e0;
+  line-height: 1.6;
+  flex-grow: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 1.1rem;
+}
+
+.feed .post-images {
+  margin: 1rem 0;
+  max-height: none;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.feed .post-image {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.feed .post-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.feed .vote-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.feed .vote-button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: transform 0.2s ease;
+}
+
+.feed .vote-button:hover {
+  transform: scale(1.1);
+}
+
+.feed .vote-button.active {
+  color: #9C27B0;
+}
+
+.feed .comment-count {
+  color: #b0b0b0;
+  font-size: 0.9rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state p {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.load-more {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
+}
+
+.loading {
+  color: #666;
+  font-size: 1rem;
+}
+
+.no-more-posts {
+  color: #666;
+  font-size: 1rem;
+}
+
+.view-all-posts-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  padding: 10px;
+}
+
+.view-all-posts-btn {
+  background-color: #9C27B0;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.view-all-posts-btn:hover {
+  background-color: #7B1FA2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.view-all-posts-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .sidebar {
+    position: static;
+    margin-bottom: 2rem;
+  }
+
+  .feed {
+    max-width: 100%;
+  }
+} 

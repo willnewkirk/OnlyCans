@@ -10,9 +10,7 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Permanent Marker', cursive;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #1a1a1b;
@@ -27,7 +25,7 @@ body {
 
 .app-container {
   flex: 1;
-  padding-top: 60px; /* Height of the header */
+  padding-top: 300px; /* Increased from 250px to move content down further */
 }
 
 .header {
@@ -37,7 +35,6 @@ body {
   left: 0;
   right: 0;
   height: 60px;
-  border-bottom: 1px solid #343536;
   z-index: 1000;
 }
 
@@ -118,26 +115,6 @@ body {
   }
 }
 
-.search-bar {
-  flex-grow: 1;
-  max-width: 600px;
-  margin: 0 20px;
-}
-
-.search-bar input {
-  width: 100%;
-  padding: 8px 16px;
-  border-radius: 20px;
-  border: 1px solid #343536;
-  background-color: #272729;
-  color: #d7dadc;
-  font-size: 14px;
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  user-select: text;
-}
-
 .user-controls {
   display: flex;
   align-items: center;
@@ -145,11 +122,12 @@ body {
 }
 
 .username {
-  color: #8A2BE2;
-  font-weight: 600;
+  color: #ffffff;
+  font-weight: 400;
   font-size: 14px;
   text-decoration: none;
-  transition: color 0.2s;
+  transition: text-shadow 0.2s;
+  text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
 }
 
 .username:hover {
@@ -164,12 +142,14 @@ body {
   border-radius: 20px;
   cursor: pointer;
   font-size: 0.9rem;
+  font-weight: 400;
   transition: all 0.3s ease;
+  font-family: 'Permanent Marker', cursive;
 }
 
 /* Main content styles */
 .main-content {
-  margin-top: 60px;
+  margin-top: 50px; /* Increased from 24px */
   padding: 20px;
   max-width: 1200px;
   margin-left: auto;
@@ -177,6 +157,7 @@ body {
   display: grid;
   grid-template-columns: 240px 1fr 300px;
   gap: 24px;
+  min-height: calc(100vh - 144px);
 }
 
 .sidebar {
@@ -219,6 +200,7 @@ body {
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-family: 'Permanent Marker', cursive;
 }
 
 .create-post-btn:hover {
@@ -309,11 +291,13 @@ body {
   margin-bottom: 12px;
   line-height: 1.6;
   word-wrap: break-word;
+  font-weight: 300;
 }
 
 .post-meta {
   color: #717171;
   font-size: 12px;
+  font-weight: 300;
 }
 
 .right-sidebar {
@@ -342,6 +326,7 @@ body {
   margin-bottom: 16px;
   line-height: 1.4;
   font-size: 14px;
+  font-weight: 300;
 }
 
 .rules li strong {
@@ -349,6 +334,7 @@ body {
   display: block;
   margin-bottom: 4px;
   font-size: 15px;
+  font-weight: 400;
 }
 
 .rules li br {
@@ -468,11 +454,13 @@ button:hover {
     grid-template-columns: 1fr;
     padding: 12px;
     gap: 16px;
+    margin-top: 120px;
   }
 
   .sidebar {
     min-height: auto;
     order: 2;
+    padding: 16px;
   }
 
   .feed {
@@ -483,101 +471,9 @@ button:hover {
     order: 3;
   }
 
-  header {
-    padding: 0 12px;
-  }
-
-  .logo {
-    font-size: 2rem;
-    margin-right: 12px;
-  }
-
-  .header-right {
-    gap: 8px;
-  }
-
-  .username {
-    font-size: 12px;
-    padding: 3px 6px;
-    margin-right: 8px;
-  }
-
-  .profile-btn {
-    padding: 6px 12px;
-    font-size: 14px;
-  }
-
-  .auth-buttons .profile-btn {
-    min-width: 80px;
-  }
-
-  .auth-card {
-    padding: 1.5rem;
-  }
-
   .post {
     padding: 12px;
     gap: 12px;
-  }
-
-  .post-votes button {
-    font-size: 20px;
-    width: 28px;
-    height: 28px;
-  }
-
-  .post-content h3 {
-    font-size: 16px;
-  }
-
-  .rules li {
-    margin-bottom: 12px;
-    font-size: 13px;
-  }
-
-  .rules li strong {
-    font-size: 14px;
-  }
-}
-
-/* Small mobile devices */
-@media (max-width: 480px) {
-  .logo {
-    font-size: 1.75rem;
-  }
-
-  .main-content {
-    padding: 8px;
-    gap: 12px;
-  }
-
-  .post {
-    padding: 10px;
-    gap: 10px;
-  }
-
-  .auth-card {
-    padding: 1rem;
-  }
-
-  .profile-btn {
-    padding: 6px 10px;
-    font-size: 13px;
-  }
-
-  .auth-buttons {
-    gap: 8px;
-  }
-
-  .auth-buttons .profile-btn {
-    min-width: 70px;
-  }
-
-  .username {
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .post-votes {
@@ -596,6 +492,128 @@ button:hover {
 
   .post-content p {
     font-size: 14px;
+  }
+
+  .post-actions {
+    gap: 12px;
+  }
+
+  .post-actions button {
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+
+  .rules li {
+    margin-bottom: 12px;
+    font-size: 13px;
+  }
+
+  .rules li strong {
+    font-size: 14px;
+  }
+
+  .create-post-btn {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .auth-card {
+    padding: 1.5rem;
+    width: 90%;
+    max-width: 400px;
+  }
+
+  .auth-card h2 {
+    font-size: 1.5rem;
+  }
+
+  .auth-card input {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .auth-buttons {
+    gap: 8px;
+  }
+
+  .auth-buttons .profile-btn {
+    min-width: 70px;
+    font-size: 13px;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .app-container {
+    padding-top: 100px;
+  }
+
+  .main-content {
+    padding: 8px;
+    gap: 12px;
+    margin-top: 100px;
+  }
+
+  .post {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .post-content h3 {
+    font-size: 14px;
+  }
+
+  .post-content p {
+    font-size: 13px;
+  }
+
+  .post-actions {
+    gap: 8px;
+  }
+
+  .post-actions button {
+    padding: 4px 6px;
+    font-size: 12px;
+  }
+
+  .auth-card {
+    padding: 1rem;
+    width: 95%;
+  }
+
+  .auth-card h2 {
+    font-size: 1.3rem;
+  }
+
+  .auth-card input {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .auth-buttons .profile-btn {
+    min-width: 60px;
+    font-size: 12px;
+  }
+
+  .create-post-btn {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .rules li {
+    font-size: 12px;
+  }
+
+  .rules li strong {
+    font-size: 13px;
+  }
+
+  .community-info h2 {
+    font-size: 1.5rem;
+  }
+
+  .community-info p {
+    font-size: 13px;
   }
 }
 
@@ -716,13 +734,233 @@ input:focus, textarea:focus {
   }
 }
 
-.post-author {
-  color: #8A2BE2;
-  font-weight: 600;
+.post-author,
+.modal-author,
+.comment-author {
+  color: #ffffff !important;
+  text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+  transition: text-shadow 0.2s;
   text-decoration: none;
-  transition: color 0.2s;
+  cursor: pointer;
+  font-family: 'Permanent Marker', cursive;
 }
 
-.post-author:hover {
-  color: #6A1B9A;
+.post-author:hover,
+.modal-author:hover,
+.comment-author:hover {
+  text-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+}
+
+/* Add this at the top of the file */
+.purple-text, 
+a[href]:not(.profile-btn):not(.logo-link),
+.post-title a,
+.post-author,
+.comment-author,
+.rules h3,
+.community-info h2,
+.profile-header h1,
+.profile-username,
+.rules ol li::marker,
+.rules ol li strong {
+  color: #ffffff !important;
+  text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+  transition: text-shadow 0.2s;
+}
+
+.purple-text:hover,
+a[href]:not(.profile-btn):not(.logo-link):hover,
+.post-title a:hover,
+.post-author:hover,
+.comment-author:hover,
+.rules h3:hover,
+.community-info h2:hover,
+.profile-header h1:hover,
+.profile-username:hover,
+.rules ol li:hover::marker,
+.rules ol li:hover strong {
+  text-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+}
+
+.comment-btn {
+  background: none;
+  border: none;
+  color: #717171;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Permanent Marker', cursive;
+}
+
+.comment-btn:hover {
+  color: #b388ff;
+  background-color: rgba(179, 136, 255, 0.1);
+  border-radius: 4px;
+}
+
+/* Create Post Modal styles */
+.create-post-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.create-post-content {
+  background-color: #272729;
+  padding: 24px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.create-post-content h2 {
+  color: #b388ff;
+  margin-bottom: 20px;
+  font-family: 'Permanent Marker', cursive;
+}
+
+.create-post-content input,
+.create-post-content textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #404040;
+  border-radius: 4px;
+  background-color: #1a1a1b;
+  color: #d7dadc;
+  font-family: 'Permanent Marker', cursive;
+}
+
+.create-post-content textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.create-post-content button {
+  width: 100%;
+  padding: 12px;
+  background-color: #b388ff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Permanent Marker', cursive;
+}
+
+.create-post-content button:hover {
+  background-color: #9575cd;
+  transform: translateY(-1px);
+}
+
+/* Enlarged Post Modal styles */
+.enlarged-post-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.enlarged-post-content {
+  background-color: #272729;
+  padding: 24px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.enlarged-post-content h2 {
+  color: #b388ff;
+  margin-bottom: 20px;
+  font-family: 'Permanent Marker', cursive;
+}
+
+.enlarged-post-content input,
+.enlarged-post-content textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #404040;
+  border-radius: 4px;
+  background-color: #1a1a1b;
+  color: #d7dadc;
+  font-family: 'Permanent Marker', cursive;
+}
+
+.enlarged-post-content textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.enlarged-post-content button {
+  width: 100%;
+  padding: 12px;
+  background-color: #b388ff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Permanent Marker', cursive;
+}
+
+.enlarged-post-content button:hover {
+  background-color: #9575cd;
+  transform: translateY(-1px);
+}
+
+.comment-section {
+  margin-top: 24px;
+  border-top: 1px solid #404040;
+  padding-top: 24px;
+}
+
+.comment-section h3 {
+  color: #b388ff;
+  margin-bottom: 16px;
+  font-family: 'Permanent Marker', cursive;
+}
+
+.comment {
+  background-color: #1a1a1b;
+  padding: 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  border: 1px solid #404040;
+}
+
+.comment-content {
+  color: #d7dadc;
+  margin-bottom: 8px;
+  line-height: 1.6;
+  font-family: 'Permanent Marker', cursive;
+}
+
+.comment-meta {
+  color: #717171;
+  font-size: 12px;
+  font-family: 'Permanent Marker', cursive;
 } 

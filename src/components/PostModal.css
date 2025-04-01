@@ -38,15 +38,53 @@
   gap: 12px;
 }
 
-.modal-author {
-  color: #8A2BE2;
-  font-weight: 600;
+.modal-content .modal-author {
+  color: #333;
   text-decoration: none;
-  transition: color 0.2s;
+  font-weight: 600;
+  transition: color 0.2s, text-shadow 0.2s;
 }
 
-.modal-author:hover {
-  color: #6A1B9A;
+.modal-content .modal-author:hover {
+  color: #555;
+}
+
+.modal-content .modal-author.admin {
+  color: #ff4444 !important;
+  text-shadow: 0 0 10px rgba(255, 68, 68, 0.4) !important;
+  animation: glow-admin 2s ease-in-out infinite alternate !important;
+}
+
+.modal-content .modal-author.mod {
+  color: #4CAF50 !important;
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.4) !important;
+  animation: glow-mod 2s ease-in-out infinite alternate !important;
+}
+
+@keyframes glow-admin {
+  from {
+    text-shadow: 0 0 5px rgba(255, 68, 68, 0.4),
+                 0 0 10px rgba(255, 68, 68, 0.3),
+                 0 0 15px rgba(255, 68, 68, 0.2);
+  }
+  to {
+    text-shadow: 0 0 10px rgba(255, 68, 68, 0.6),
+                 0 0 20px rgba(255, 68, 68, 0.4),
+                 0 0 30px rgba(255, 68, 68, 0.3);
+  }
+}
+
+@keyframes glow-mod {
+  from {
+    text-shadow: 0 0 5px rgba(76, 175, 80, 0.4),
+                 0 0 10px rgba(76, 175, 80, 0.3),
+                 0 0 15px rgba(76, 175, 80, 0.2);
+  }
+  to {
+    text-shadow: 0 0 10px rgba(76, 175, 80, 0.6),
+                 0 0 20px rgba(76, 175, 80, 0.4),
+                 0 0 30px rgba(76, 175, 80, 0.3);
+  }
 }
 
 .modal-timestamp {

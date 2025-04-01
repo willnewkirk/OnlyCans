@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- Can body -->
+  <path d="M12,8 L20,8 L20,24 L12,24 Z" fill="#000000"/>
+  <!-- White label -->
+  <path d="M13,10 L19,10 L19,20 L13,20 Z" fill="#ffffff"/>
+  <!-- Nozzle -->
+  <path d="M14,4 L18,4 L18,8 L14,8 Z" fill="#000000"/>
+  <!-- Nozzle tip -->
+  <path d="M15,2 L17,2 L17,4 L15,4 Z" fill="#000000"/>
+  <!-- Spray button -->
+  <circle cx="16" cy="16" r="1.5" fill="#ffffff"/>
+</svg> 

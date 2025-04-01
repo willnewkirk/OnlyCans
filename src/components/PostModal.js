@@ -20,6 +20,16 @@ export default function PostModal({ post, onClose, onVote, onComment, onDeletePo
     setNewComment('');
   };
 
+  const getAuthorClassNames = (post) => {
+    const classes = ['modal-author'];
+    if (post.authorRole === 'admin') {
+      classes.push('admin');
+    } else if (post.authorRole === 'mod') {
+      classes.push('mod');
+    }
+    return classes.join(' ');
+  };
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -28,8 +38,8 @@ export default function PostModal({ post, onClose, onVote, onComment, onDeletePo
         <div className="modal-header">
           <div className="modal-header-left">
             <Link 
-              to={`/profile/${post.authorName}`} 
-              className="modal-author"
+              to={`/profile/${post.authorName}`}
+              className={getAuthorClassNames(post)}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();

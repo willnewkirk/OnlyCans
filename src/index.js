@@ -6,6 +6,8 @@ import App from './App';
 import { AuthProvider } from './contexts/AuthContext';
 import reportWebVitals from './reportWebVitals';
 import ErrorBoundary from './components/ErrorBoundary';
+import './styles/global.css';
+import './styles/cursor.css';
 
 // Add debugging
 console.log('Starting application...');

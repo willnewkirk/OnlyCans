@@ -1,13 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import PostModal from './PostModal';
 import './MainContent.css';
 
-export default function MainContent({ posts, onVote, onDelete, onCreatePost, onComment, onDeleteComment }) {
+export default function MainContent({ 
+  posts, 
+  onVote, 
+  onDelete, 
+  onCreatePost, 
+  onComment, 
+  onDeleteComment,
+  showAllPosts = false,
+  totalPosts = 0,
+  hasMore = false,
+  isLoading = false,
+  onLoadMore = () => {}
+}) {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [selectedPost, setSelectedPost] = useState(null);
+  const loadMoreRef = useRef(null);
+  const POSTS_TO_SHOW = 5;
+
+  useEffect(() => {
+    if (!showAllPosts) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (first.isIntersecting && hasMore && !isLoading) {
+          onLoadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentRef = loadMoreRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [showAllPosts, hasMore, isLoading, onLoadMore]);
 
   const formatTimestamp = (timestamp) => {
     const now = Date.now();
@@ -61,12 +100,26 @@ export default function MainContent({ posts, onVote, onDelete, onCreatePost, onC
     setSelectedPost(null);
   };
 
+  const handleViewAllPosts = () => {
+    navigate('/all-posts');
+  };
+
+  const getAuthorClassNames = (post) => {
+    const classes = ['post-author'];
+    if (post.authorRole === 'admin') {
+      classes.push('admin');
+    } else if (post.authorRole === 'mod') {
+      classes.push('mod');
+    }
+    return classes.join(' ');
+  };
+
   return (
     <div className="main-content">
       <div className="sidebar">
         <div className="community-info">
           <h2>Welcome to OnlyCans</h2>
-          <p>Share your favorite cans with the community!</p>
+          <p>Share a piece, drawing, etc.</p>
           <button 
             className="create-post-btn"
             onClick={onCreatePost}
@@ -77,91 +130,123 @@ export default function MainContent({ posts, onVote, onDelete, onCreatePost, onC
       </div>
 
       <div className="feed">
+        {showAllPosts && (
+          <div className="feed-header">
+            <h2>All Posts</h2>
+            <button 
+              className="back-button"
+              onClick={() => navigate('/')}
+            >
+              Back to Home
+            </button>
+          </div>
+        )}
+        
         {posts.length === 0 ? (
           <div className="empty-state">
             <p>No posts yet. Be the first to share!</p>
           </div>
         ) : (
-          posts.map(post => (
-            <div 
-              key={post.id} 
-              className="post"
-              onClick={() => handlePostClick(post)}
-            >
-              <div className="post-header">
-                <div className="post-header-left">
-                  <Link 
-                    to={`/profile/${post.authorName}`} 
-                    className="post-author"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      navigate(`/profile/${post.authorName}`);
-                    }}
-                  >
-                    {post.authorName}
-                  </Link>
-                  <span className="post-timestamp">
-                    {formatTimestamp(post.timestamp)}
-                  </span>
-                </div>
-                <div className="post-header-actions">
-                  {post.authorId === currentUser?.uid && (
-                    <button 
-                      className="delete-post"
+          <>
+            {posts.map(post => (
+              <div 
+                key={post.id} 
+                className="post"
+                onClick={() => setSelectedPost(post)}
+              >
+                <div className="post-header">
+                  <div className="post-header-left">
+                    <Link 
+                      to={`/profile/${post.authorName}`} 
+                      className={getAuthorClassNames(post)}
                       onClick={(e) => {
+                        e.preventDefault();
                         e.stopPropagation();
-                        handleDeletePost(post.id);
+                        navigate(`/profile/${post.authorName}`);
                       }}
                     >
-                      🗑️
+                      {post.authorName}
+                    </Link>
+                    <span className="post-timestamp">
+                      {formatTimestamp(post.timestamp)}
+                    </span>
+                  </div>
+                  <div className="post-header-actions">
+                    {post.authorId === currentUser?.uid && (
+                      <button 
+                        className="delete-post"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeletePost(post.id);
+                        }}
+                      >
+                        🗑️
+                      </button>
+                    )}
+                  </div>
+                </div>
+                
+                <h3 className="post-title">{truncateText(post.title)}</h3>
+                <p className="post-content">{truncateText(post.content)}</p>
+                
+                {post.imageUrl && (
+                  <div className="post-images">
+                    <img 
+                      src={post.imageUrl} 
+                      alt="Post content" 
+                      className="post-image"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                )}
+                
+                <div className="post-actions">
+                  <div className="vote-buttons">
+                    <button 
+                      className={`vote-button ${post.userVotes?.[currentUser?.uid] === 'up' ? 'active' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onVote(post.id, 'up');
+                      }}
+                    >
+                      👍
                     </button>
-                  )}
+                    <span>{post.votes || 0}</span>
+                    <button 
+                      className={`vote-button ${post.userVotes?.[currentUser?.uid] === 'down' ? 'active' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onVote(post.id, 'down');
+                      }}
+                    >
+                      👎
+                    </button>
+                  </div>
+                  <span className="comment-count">
+                    💬 {post.comments?.length || 0}
+                  </span>
                 </div>
               </div>
-              
-              <h3 className="post-title">{truncateText(post.title)}</h3>
-              <p className="post-content">{truncateText(post.content)}</p>
-              
-              {post.imageUrl && (
-                <div className="post-images">
-                  <img 
-                    src={post.imageUrl} 
-                    alt="Post content" 
-                    className="post-image"
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                </div>
-              )}
-              
-              <div className="post-actions">
-                <div className="vote-buttons">
-                  <button 
-                    className={`vote-button ${post.userVotes?.[currentUser?.uid] === 'up' ? 'active' : ''}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onVote(post.id, 'up');
-                    }}
-                  >
-                    👍
-                  </button>
-                  <span>{post.votes || 0}</span>
-                  <button 
-                    className={`vote-button ${post.userVotes?.[currentUser?.uid] === 'down' ? 'active' : ''}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onVote(post.id, 'down');
-                    }}
-                  >
-                    👎
-                  </button>
-                </div>
-                <span className="comment-count">
-                  💬 {post.comments?.length || 0}
-                </span>
+            ))}
+            {!showAllPosts && totalPosts > POSTS_TO_SHOW && (
+              <div className="view-all-posts-container">
+                <button 
+                  className="view-all-posts-btn"
+                  onClick={handleViewAllPosts}
+                >
+                  View All Posts ({totalPosts})
+                </button>
               </div>
-            </div>
-          ))
+            )}
+            {showAllPosts && (
+              <div ref={loadMoreRef} className="load-more">
+                {isLoading && <div className="loading">Loading more posts...</div>}
+                {!hasMore && posts.length > 0 && (
+                  <div className="no-more-posts">No more posts to load</div>
+                )}
+              </div>
+            )}
+          </>
         )}
       </div>
 

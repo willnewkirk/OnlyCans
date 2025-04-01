@@ -1,16 +1,62 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check if user is the owner of the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Helper function to check if user is Amleth
+    function isAmleth() {
+      return isAuthenticated() && request.auth.uid == 'amleth_user_id'; // Replace with actual Amleth's user ID
+    }
+
+    // Helper function to check if the update is a profile update
+    function isProfileUpdate() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['username', 'email', 'displayName']);
+    }
+
+    // Users collection rules
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isOwner(userId) && isProfileUpdate();
+      allow delete: if isOwner(userId);
+    }
+
+    // Posts collection rules
     match /posts/{postId} {
-      allow read: if true;
-      allow create: if request.auth != null;
-      allow update: if request.auth != null && 
-        (resource.data.authorId == request.auth.uid || 
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (
+        // Allow users to update votes and comments count
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['votes', 'userVotes', 'comments', 'authorName']) ||
+        // Allow post owners to update their posts
+        (resource.data.authorId == request.auth.uid && 
          request.resource.data.diff(resource.data).affectedKeys()
-         .hasOnly(['votes', 'userVotes', 'comments']));
-      allow delete: if request.auth != null && 
-        (resource.data.authorId == request.auth.uid ||
-         request.auth.token.email == 'amleth');
+           .hasOnly(['title', 'content', 'imageUrl']))
+      );
+      allow delete: if isAuthenticated() && (
+        resource.data.authorId == request.auth.uid ||
+        isAmleth()
+      );
+    }
+
+    // Comments subcollection rules
+    match /posts/{postId}/comments/{commentId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && 
+        resource.data.authorId == request.auth.uid;
+      allow delete: if isAuthenticated() && 
+        resource.data.authorId == request.auth.uid;
     }
   }
 } 

@@ -1,0 +1,342 @@
+.profile-settings {
+  background-color: #272729;
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 24px;
+  border: 1px solid #343536;
+}
+
+.profile-settings h2 {
+  color: #b388ff;
+  margin-bottom: 24px;
+  font-family: 'Permanent Marker', cursive;
+  text-shadow: 2px 2px 4px rgba(179, 136, 255, 0.3);
+}
+
+.settings-section {
+  margin-bottom: 32px;
+}
+
+.settings-section h3 {
+  color: #d7dadc;
+  margin-bottom: 16px;
+  font-family: 'Permanent Marker', cursive;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  color: #d7dadc;
+  margin-bottom: 8px;
+  font-family: 'Permanent Marker', cursive;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  background-color: #1a1a1b;
+  border: 1px solid #404040;
+  border-radius: 4px;
+  color: #d7dadc;
+  font-family: 'Permanent Marker', cursive;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #b388ff;
+}
+
+.profile-settings button {
+  background-color: #b388ff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Permanent Marker', cursive;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.profile-settings button:hover {
+  background-color: #9575cd;
+  transform: translateY(-1px);
+}
+
+.profile-settings button:disabled {
+  background-color: #404040;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.error-message {
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  color: #ff6b6b;
+  padding: 12px;
+  border-radius: 4px;
+  margin-top: 16px;
+  font-family: 'Permanent Marker', cursive;
+}
+
+.success-message {
+  background-color: rgba(46, 125, 50, 0.1);
+  border: 1px solid rgba(46, 125, 50, 0.3);
+  color: #4caf50;
+  padding: 12px;
+  border-radius: 4px;
+  margin-top: 16px;
+  font-family: 'Permanent Marker', cursive;
+}
+
+@media (max-width: 768px) {
+  .profile-settings {
+    padding: 16px;
+    margin-top: 16px;
+  }
+
+  .profile-settings h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .settings-section h3 {
+    font-size: 18px;
+  }
+
+  .form-group input {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .profile-settings button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-settings {
+    padding: 12px;
+  }
+
+  .profile-settings h2 {
+    font-size: 20px;
+  }
+
+  .settings-section h3 {
+    font-size: 16px;
+  }
+
+  .form-group input {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .profile-settings button {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+}
+
+.profile-settings-dropdown {
+  position: relative;
+  width: 100%;
+  margin-top: 24px;
+}
+
+.settings-toggle {
+  width: 100%;
+  padding: 12px 24px;
+  background-color: #272729;
+  border: 1px solid #343536;
+  border-radius: 8px;
+  color: #b388ff;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+}
+
+.settings-toggle:hover {
+  background-color: #2d2d2d;
+  border-color: #b388ff;
+  text-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+}
+
+.dropdown-arrow {
+  transition: transform 0.3s ease;
+  font-size: 12px;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+.settings-content {
+  background-color: #272729;
+  border: 1px solid #343536;
+  border-radius: 8px;
+  margin-top: 8px;
+  padding: 20px;
+  animation: slideDown 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.settings-section:last-child {
+  margin-bottom: 0;
+}
+
+.settings-content button {
+  background-color: #b388ff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Permanent Marker', cursive;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.settings-content button:hover {
+  background-color: #9575cd;
+  transform: translateY(-1px);
+}
+
+.settings-content button:disabled {
+  background-color: #404040;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .settings-toggle {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .settings-content {
+    padding: 16px;
+  }
+
+  .settings-section h3 {
+    font-size: 16px;
+  }
+
+  .form-group input {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .settings-content button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-toggle {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .settings-content {
+    padding: 12px;
+  }
+
+  .settings-section h3 {
+    font-size: 14px;
+  }
+
+  .form-group input {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .settings-content button {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+}
+
+.delete-account-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #ddd;
+}
+
+.delete-account-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.delete-account-button:hover {
+  background-color: #c82333;
+}
+
+.delete-account-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.cancel-delete {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.cancel-delete:hover {
+  background-color: #5a6268;
+}
+
+.confirm-delete {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.confirm-delete:hover {
+  background-color: #c82333;
+}
+
+.confirm-delete:disabled {
+  background-color: #dc354580;
+  cursor: not-allowed;
+} 

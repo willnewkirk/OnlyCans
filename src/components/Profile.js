@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { db } from '../firebase';
-import { collection, query, where, orderBy, onSnapshot, getDocs } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot, getDocs, doc, updateDoc, deleteDoc, arrayUnion } from 'firebase/firestore';
 import Header from './Header';
 import PostModal from './PostModal';
+import ProfileSettings from './ProfileSettings';
 import './Profile.css';
 
 function Profile() {
@@ -235,10 +236,18 @@ function Profile() {
   const renderFlairs = (username) => {
     console.log('Current username:', username); // Debug log
     const normalizedUsername = username?.toLowerCase();
+    const ogUsers = ['amleth', 'pigment', 'bird', 'gabo', 'jimbobwe', 'kempf'];
+    
     if (normalizedUsername === 'amleth' || normalizedUsername === 'pigment') {
       return (
         <div className="flair-container">
           <span className="flair admin">Admin</span>
+          <span className="flair og">OG</span>
+        </div>
+      );
+    } else if (ogUsers.includes(normalizedUsername)) {
+      return (
+        <div className="flair-container">
           <span className="flair og">OG</span>
         </div>
       );
@@ -298,6 +307,9 @@ function Profile() {
             </div>
           )}
         </div>
+        {currentUser && currentUser.displayName === username && (
+          <ProfileSettings />
+        )}
       </div>
       {selectedPost && (
         <PostModal
