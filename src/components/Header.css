@@ -10,7 +10,7 @@
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  height: 180px;
+  height: 60px;
 }
 
 .header-content {
@@ -60,7 +60,7 @@
 }
 
 .logo img {
-  height: 160px !important;
+  height: 40px !important;
   width: auto;
   object-fit: contain;
   margin: 0;
@@ -74,11 +74,11 @@
 }
 
 .header-logo {
-  height: 200px;
+  height: 40px;
   width: auto;
   filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3)) drop-shadow(0 0 10px rgba(138, 43, 226, 0.5));
   transition: transform 0.3s ease, filter 0.3s ease;
-  margin-top: 24px;
+  margin-top: 0;
 }
 
 .header-logo:hover {
@@ -88,7 +88,7 @@
 }
 
 .mobile-logo {
-  height: 200px;
+  height: 40px;
 }
 
 .search-bar {
@@ -179,7 +179,7 @@
 @media (max-width: 768px) {
   .header {
     padding: 0.5rem 0.75rem;
-    height: 160px;
+    height: 50px;
   }
 
   .logo {
@@ -194,7 +194,7 @@
   }
 
   .logo img {
-    height: 140px !important;
+    height: 35px !important;
     margin-top: 0;
     top: 0;
   }
@@ -210,12 +210,12 @@
   }
 
   .header-logo {
-    height: 120px;
+    height: 35px;
     margin-top: 0;
   }
 
   .mobile-logo {
-    height: 120px;
+    height: 35px;
     margin-top: 0;
   }
 
@@ -260,7 +260,7 @@
 @media (max-width: 480px) {
   .header {
     padding: 0.4rem 0.6rem;
-    height: 140px;
+    height: 45px;
   }
 
   .logo {
@@ -275,7 +275,7 @@
   }
 
   .logo img {
-    height: 120px !important;
+    height: 30px !important;
     margin-top: 0;
     top: 0;
   }
@@ -291,12 +291,12 @@
   }
 
   .header-logo {
-    height: 100px;
+    height: 30px;
     margin-top: 0;
   }
 
   .mobile-logo {
-    height: 100px;
+    height: 30px;
     margin-top: 0;
   }
 
