@@ -1,0 +1,167 @@
+.post {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  padding: 15px;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.post-username {
+  font-weight: bold;
+  color: #333;
+  text-decoration: none;
+}
+
+.post-username:hover {
+  color: #9C27B0;
+}
+
+.post-date {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-content {
+  margin-bottom: 15px;
+}
+
+.post-content p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.post-image {
+  width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.post-actions {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.like-button,
+.comment-button {
+  background: none;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #666;
+  transition: color 0.2s;
+}
+
+.like-button:hover,
+.comment-button:hover {
+  color: #9C27B0;
+}
+
+.like-button.liked {
+  color: #9C27B0;
+}
+
+.like-button svg,
+.comment-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.comments-section {
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+  margin-top: 10px;
+}
+
+.comment-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.comment-form input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.comment-form button {
+  background: #9C27B0;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.comment-form button:hover {
+  background: #7B1FA2;
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comment {
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.comment-username {
+  font-weight: bold;
+  color: #333;
+  text-decoration: none;
+  margin-right: 8px;
+}
+
+.comment-username:hover {
+  color: #9C27B0;
+}
+
+.comment p {
+  margin: 5px 0;
+  line-height: 1.4;
+}
+
+.comment-date {
+  color: #666;
+  font-size: 0.8em;
+}
+
+@media (max-width: 768px) {
+  .post {
+    margin: 10px;
+    padding: 12px;
+  }
+
+  .post-image {
+    max-height: 300px;
+  }
+
+  .comment-form {
+    flex-direction: column;
+  }
+
+  .comment-form button {
+    width: 100%;
+  }
+} 

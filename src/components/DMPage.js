@@ -4,7 +4,7 @@ import { useDM } from '../contexts/DMContext';
 import { useAuth } from '../contexts/AuthContext';
 import Header from './Header';
 import './DMPage.css';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, getDocs, where, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
 function DMPage() {
@@ -16,6 +16,7 @@ function DMPage() {
   const [isRenaming, setIsRenaming] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [participants, setParticipants] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,6 +34,23 @@ function DMPage() {
         }));
         setMessages(messagesData);
       });
+
+      // Fetch participant details
+      const fetchParticipants = async () => {
+        const participantDetails = await Promise.all(
+          currentConversation.participants.map(async (participantId) => {
+            const userRef = doc(db, 'users', participantId);
+            const userDoc = await getDoc(userRef);
+            if (userDoc.exists()) {
+              return { id: participantId, ...userDoc.data() };
+            }
+            return null;
+          })
+        );
+        setParticipants(participantDetails.filter(p => p !== null));
+      };
+
+      fetchParticipants();
 
       return () => unsubscribe();
     }
@@ -109,7 +127,7 @@ function DMPage() {
                     </div>
                   ) : (
                     <span className="participant-name">
-                      {conv.participants.find(p => p.uid !== currentUser?.uid)?.displayName || 'Unknown User'}
+                      {conv.participants.find(p => p !== currentUser?.uid)?.displayName || 'Unknown User'}
                     </span>
                   )}
                 </div>
@@ -160,10 +178,30 @@ function DMPage() {
                   </div>
                 ) : (
                   <h3>
-                    {currentConversation.participants.find(p => p.uid !== currentUser?.uid)?.displayName || 'Unknown User'}
+                    {participants.find(p => p.uid !== currentUser?.uid)?.displayName || 'Unknown User'}
                   </h3>
                 )}
               </div>
+
+              {currentConversation.isGroup && (
+                <div className="group-members">
+                  <h4>Group Members</h4>
+                  <div className="members-list">
+                    {participants.map(participant => (
+                      <div key={participant.uid} className="member-item">
+                        <span className="member-name">{participant.displayName}</span>
+                        {participant.flair && (
+                          <span className="member-flair">{participant.flair}</span>
+                        )}
+                        {participant.uid === currentUser?.uid && (
+                          <span className="member-you">(You)</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="messages-container">
                 {messages.map(message => (
                   <div

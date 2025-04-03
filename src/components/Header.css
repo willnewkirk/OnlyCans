@@ -3,15 +3,14 @@
   top: 0;
   left: 0;
   right: 0;
-  background-color: #2d2d2d;
   z-index: 1000;
-  padding: 12px 24px;
-  border: none;
-  box-shadow: none;
+  background-color: #1a1a1a;
+  padding: 0.5rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  min-height: 50px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 140px;
 }
 
 .header-content {
@@ -41,30 +40,30 @@
 }
 
 .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffffff;
+  text-decoration: none;
   display: flex;
   align-items: center;
-  text-decoration: none;
-  color: #9C27B0;
-  font-weight: 700;
-  font-size: 2rem;
-  color: #b388ff;
-  text-shadow: 2px 2px 0px #9575cd;
-  margin: 0;
-  padding: 0;
-  position: relative;
-  transition: all 0.3s ease;
-  background: linear-gradient(45deg, #b388ff, #9575cd);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  gap: 0.5rem;
+  text-shadow: 0 0 10px rgba(156, 39, 176, 0.8);
+  font-family: 'Permanent Marker', cursive;
+  letter-spacing: 1px;
+}
+
+.logo svg {
+  width: 32px;
+  height: 32px;
 }
 
 .logo img {
-  height: 150px !important;
+  height: 140px !important;
   width: auto;
   object-fit: contain;
-  margin-top: 0;
+  margin-top: 20px;
   position: relative;
-  top: 25px;
+  top: 0;
 }
 
 .logo-link:hover .logo {
@@ -149,83 +148,70 @@
   font-family: 'Permanent Marker', cursive;
 }
 
-.dm-button {
+.dm-button, .profile-link, .logout-button, .login-button, .signup-button {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background-color: #3d3d3d;
-  border-radius: 50%;
-  color: #ffffff;
-  transition: all 0.2s ease;
-}
-
-.dm-button:hover {
-  background-color: #4d4d4d;
-  transform: scale(1.1);
-}
-
-.profile-link {
-  color: #ffffff;
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s;
-}
-
-.profile-link:hover {
-  color: #b388ff;
-}
-
-.logout-button {
-  background-color: #3d3d3d;
-  color: white;
+  gap: 0.5rem;
+  background-color: #2d2d2d;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-.logout-button:hover {
-  background-color: #4d4d4d;
-}
-
-.login-button, .signup-button {
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-
-.login-button {
+.dm-button:hover, .profile-link:hover, .logout-button:hover, .login-button:hover, .signup-button:hover {
   background-color: #3d3d3d;
-  color: white;
-}
-
-.signup-button {
-  background-color: #9C27B0;
-  color: white;
-}
-
-.login-button:hover, .signup-button:hover {
   transform: scale(1.05);
 }
 
+.dm-button svg, .profile-link svg {
+  width: 20px;
+  height: 20px;
+}
+
 @media (max-width: 768px) {
+  .header {
+    padding: 0.5rem 0.75rem;
+    height: 120px;
+  }
+
+  .logo {
+    font-size: 1.2rem;
+  }
+
+  .logo svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .logo img {
+    height: 120px !important;
+    margin-top: 0;
+    top: 0;
+  }
+
+  .dm-button, .profile-link, .logout-button, .login-button, .signup-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
   .header-content {
     padding: 0 16px;
-    height: 100px;
+    height: 120px;
   }
 
   .header-logo {
-    height: 100px;
-    margin-top: 12px;
+    height: 120px;
+    margin-top: 0;
   }
 
   .mobile-logo {
-    height: 100px;
-    margin-top: 12px;
+    height: 120px;
+    margin-top: 0;
   }
 
   .search-bar {
@@ -267,19 +253,44 @@
 }
 
 @media (max-width: 480px) {
+  .header {
+    padding: 0.4rem 0.6rem;
+    height: 100px;
+  }
+
+  .logo {
+    font-size: 1rem;
+  }
+
+  .logo svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .logo img {
+    height: 100px !important;
+    margin-top: 0;
+    top: 0;
+  }
+
+  .dm-button, .profile-link, .logout-button, .login-button, .signup-button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
   .header-content {
     padding: 0 12px;
-    height: 80px;
+    height: 100px;
   }
 
   .header-logo {
-    height: 80px;
-    margin-top: 8px;
+    height: 100px;
+    margin-top: 0;
   }
 
   .mobile-logo {
-    height: 80px;
-    margin-top: 8px;
+    height: 100px;
+    margin-top: 0;
   }
 
   .search-bar {

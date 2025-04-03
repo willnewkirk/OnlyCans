@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useDM } from '../contexts/DMContext';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import Header from './Header';
 import './NewDM.css';
@@ -20,29 +20,19 @@ function NewDM() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        console.log('Fetching users...');
         const usersRef = collection(db, 'users');
         const q = query(usersRef);
         const querySnapshot = await getDocs(q);
         
-        console.log('Raw user data:', querySnapshot.docs.map(doc => doc.data()));
-        
         const usersData = querySnapshot.docs
-          .map(doc => {
-            const data = doc.data();
-            return {
-              id: doc.id,
-              uid: data.uid || doc.id,
-              displayName: data.displayName || 'Anonymous User',
-              ...data
-            };
-          })
-          .filter(user => {
-            console.log('Checking user:', user);
-            return user.uid && user.uid !== currentUser?.uid;
-          });
+          .map(doc => ({
+            id: doc.id,
+            uid: doc.id,
+            displayName: doc.data().displayName || 'Anonymous User',
+            ...doc.data()
+          }))
+          .filter(user => user.uid !== currentUser?.uid);
         
-        console.log('Filtered users:', usersData);
         setUsers(usersData);
         setLoading(false);
       } catch (error) {
@@ -52,7 +42,6 @@ function NewDM() {
     };
 
     if (currentUser) {
-      console.log('Current user:', currentUser);
       fetchUsers();
     }
   }, [currentUser]);
@@ -108,7 +97,10 @@ function NewDM() {
         <div className="selected-users">
           {selectedUsers.map(user => (
             <div key={user.uid} className="selected-user">
-              {user.displayName}
+              <span className="selected-user-name">{user.displayName}</span>
+              {user.flair && (
+                <span className="selected-user-flair">{user.flair}</span>
+              )}
               <button onClick={() => toggleUserSelection(user)}>×</button>
             </div>
           ))}
@@ -135,7 +127,12 @@ function NewDM() {
                 className={`user-item ${selectedUsers.some(u => u.uid === user.uid) ? 'selected' : ''}`}
                 onClick={() => toggleUserSelection(user)}
               >
-                <span className="username">{user.displayName}</span>
+                <div className="user-info">
+                  <span className="username">{user.displayName}</span>
+                  {user.flair && (
+                    <span className="user-flair">{user.flair}</span>
+                  )}
+                </div>
                 {selectedUsers.some(u => u.uid === user.uid) ? (
                   <span className="checkmark">✓</span>
                 ) : null}

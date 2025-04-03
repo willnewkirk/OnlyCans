@@ -22,6 +22,13 @@ const usersToAdd = [
     email: 'bird@example.com',
     createdAt: new Date(),
     photoURL: null
+  },
+  {
+    uid: 'KFzHDIw4h1PWvt7DavGt5pkpeSk1',
+    displayName: 'Pig',
+    email: 'pig@example.com',
+    createdAt: new Date(),
+    photoURL: null
   }
 ];
 
@@ -36,4 +43,9 @@ export const addUsers = async () => {
   } catch (error) {
     console.error('Error adding users:', error);
   }
-}; 
+};
+
+// Run the function if this file is executed directly
+if (process.argv[1] === new URL(import.meta.url).pathname) {
+  addUsers();
+} 
