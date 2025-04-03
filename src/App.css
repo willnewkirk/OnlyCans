@@ -53,17 +53,23 @@ body {
 }
 
 .logo {
-  font-family: 'Permanent Marker', cursive;
-  font-size: 2rem;
-  color: #b388ff;
-  text-shadow: 2px 2px 0px #9575cd;
-  margin: 0;
-  padding: 0;
-  position: relative;
-  transition: all 0.3s ease;
-  background: linear-gradient(45deg, #b388ff, #9575cd);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: #9C27B0;
+  font-weight: 700;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.logo img {
+  height: clamp(24px, 3vw, 32px);
+  width: auto;
+  object-fit: contain;
 }
 
 .logo:hover {
