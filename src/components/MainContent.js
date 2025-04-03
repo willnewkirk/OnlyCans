@@ -81,7 +81,9 @@ export default function MainContent({
   };
 
   const truncateText = (text, maxLength = 4) => {
-    if (text && text.length > maxLength) {
+    if (!text) return '';
+    // Only truncate if text is longer than maxLength
+    if (text.length > maxLength) {
       return text.substring(0, maxLength) + '...';
     }
     return text;
@@ -186,8 +188,8 @@ export default function MainContent({
                   </div>
                 </div>
                 
-                <h3 className="post-title">{truncateText(post.title)}</h3>
-                <p className="post-content">{truncateText(post.content)}</p>
+                <h3 className="post-title">{post.title}</h3>
+                <p className="post-content">{post.content}</p>
                 
                 {post.imageUrl && (
                   <div className="post-images">

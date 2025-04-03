@@ -23,6 +23,9 @@ function DMPage() {
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const lastTapRef = useRef(0);
+  const chatContainerRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -141,11 +144,20 @@ function DMPage() {
     }
   };
 
+  const handleDoubleTap = (e) => {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTapRef.current;
+    if (tapLength < 500 && tapLength > 0) {
+      setIsFullscreen(!isFullscreen);
+    }
+    lastTapRef.current = currentTime;
+  };
+
   return (
     <div className="dm-page">
       <Header />
-      <div className="dm-container">
-        <div className="dm-sidebar">
+      <div className={`dm-container ${isFullscreen ? 'fullscreen' : ''}`}>
+        <div className={`dm-sidebar ${isFullscreen ? 'hidden' : ''}`}>
           <h2>Direct Messages</h2>
           <Link to="/dm/new" className="new-dm-button">
             <svg 
@@ -193,7 +205,11 @@ function DMPage() {
           </div>
         </div>
         
-        <div className="dm-chat">
+        <div 
+          className="dm-chat"
+          ref={chatContainerRef}
+          onTouchStart={handleDoubleTap}
+        >
           {currentConversation ? (
             <>
               <div className="chat-header">

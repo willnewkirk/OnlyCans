@@ -162,9 +162,10 @@ export default function AppContent({ showAllPosts = false }) {
         }
       }
 
+      // Update Firestore
       await updateDoc(postRef, updates);
 
-      // Update local state
+      // Update local state immediately
       setPosts(posts.map(p => {
         if (p.id === postId) {
           return {
@@ -178,6 +179,22 @@ export default function AppContent({ showAllPosts = false }) {
         }
         return p;
       }));
+
+      // Set up a listener for real-time updates
+      const unsubscribe = onSnapshot(postRef, (doc) => {
+        if (doc.exists()) {
+          const updatedPost = { id: doc.id, ...doc.data() };
+          setPosts(posts.map(p => {
+            if (p.id === postId) {
+              return updatedPost;
+            }
+            return p;
+          }));
+        }
+      });
+
+      // Clean up listener after 5 seconds
+      setTimeout(() => unsubscribe(), 5000);
     } catch (error) {
       console.error('Error updating vote:', error);
       setError('Failed to update vote: ' + error.message);
@@ -220,22 +237,33 @@ export default function AppContent({ showAllPosts = false }) {
   };
 
   const handleComment = async (postId, comment) => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      setError('You must be logged in to comment');
+      return;
+    }
 
     try {
       const postRef = doc(db, 'posts', postId);
+      const post = posts.find(p => p.id === postId);
+      if (!post) {
+        setError('Post not found');
+        return;
+      }
+
       const newComment = {
         id: Date.now().toString(),
         content: comment.content,
         author: currentUser.displayName || 'Anonymous User',
         authorId: currentUser.uid,
-        timestamp: Date.now()
+        timestamp: serverTimestamp()
       };
 
+      // Update Firestore
       await updateDoc(postRef, {
         comments: arrayUnion(newComment)
       });
 
+      // Update local state immediately
       setPosts(posts.map(p => {
         if (p.id === postId) {
           return {
@@ -245,9 +273,25 @@ export default function AppContent({ showAllPosts = false }) {
         }
         return p;
       }));
+
+      // Set up a listener for real-time updates
+      const unsubscribe = onSnapshot(postRef, (doc) => {
+        if (doc.exists()) {
+          const updatedPost = { id: doc.id, ...doc.data() };
+          setPosts(posts.map(p => {
+            if (p.id === postId) {
+              return updatedPost;
+            }
+            return p;
+          }));
+        }
+      });
+
+      // Clean up listener after 5 seconds
+      setTimeout(() => unsubscribe(), 5000);
     } catch (error) {
       console.error('Error adding comment:', error);
-      setError('Failed to add comment');
+      setError('Failed to add comment: ' + error.message);
     }
   };
 
