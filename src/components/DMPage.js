@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useDM } from '../contexts/DMContext';
 import { useAuth } from '../contexts/AuthContext';
 import Header from './Header';
 import './DMPage.css';
 import { collection, query, orderBy, onSnapshot, getDocs, where, doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../firebase';
+import heic2any from 'heic2any';
 
 function DMPage() {
   const { username } = useParams();
@@ -17,7 +19,18 @@ function DMPage() {
   const [newGroupName, setNewGroupName] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [participants, setParticipants] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   useEffect(() => {
     if (currentConversation) {
@@ -81,6 +94,50 @@ function DMPage() {
       setShowDeleteConfirm(false);
     } catch (error) {
       console.error('Error deleting group chat:', error);
+    }
+  };
+
+  const handleImageUpload = async (file) => {
+    if (!file) return;
+
+    try {
+      setIsUploading(true);
+      let imageFile = file;
+
+      // Convert HEIC to JPEG if needed
+      if (file.type === 'image/heic' || file.type === 'image/heif') {
+        const blob = await heic2any({
+          blob: file,
+          toType: 'image/jpeg',
+          quality: 0.8
+        });
+        imageFile = new File([blob], file.name.replace(/\.(heic|heif)$/i, '.jpg'), { type: 'image/jpeg' });
+      }
+
+      // Upload to Firebase Storage
+      const storageRef = ref(storage, `dm-images/${currentConversation.id}/${Date.now()}_${imageFile.name}`);
+      const snapshot = await uploadBytes(storageRef, imageFile);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+
+      // Send message with image
+      await sendMessage(currentConversation.id, '', downloadURL);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const validTypes = ['image/jpeg', 'image/png', 'image/heic', 'image/heif'];
+      if (validTypes.includes(file.type)) {
+        handleImageUpload(file);
+      } else {
+        alert('Please select a valid image file (JPG, PNG, or HEIC)');
+      }
     }
   };
 
@@ -203,27 +260,63 @@ function DMPage() {
               )}
 
               <div className="messages-container">
-                {messages.map(message => (
+                {messages.map((message, index) => (
                   <div
-                    key={message.id}
-                    className={`message ${message.senderId === currentUser.uid ? 'sent' : 'received'}`}
+                    key={message.id || index}
+                    className={`message ${message.senderId === currentUser?.uid ? 'sent' : 'received'}`}
                   >
-                    <p>{message.text}</p>
-                    <span className="timestamp">
-                      {new Date(message.timestamp?.toDate()).toLocaleTimeString()}
-                    </span>
+                    <div className="message-content">
+                      {message.imageUrl && (
+                        <div className="message-image-container">
+                          <img 
+                            src={message.imageUrl} 
+                            alt="Shared" 
+                            className="message-image"
+                            onClick={() => window.open(message.imageUrl, '_blank')}
+                          />
+                        </div>
+                      )}
+                      {message.text && <p className="message-text">{message.text}</p>}
+                      <span className="timestamp">
+                        {new Date(message.timestamp?.toDate()).toLocaleTimeString()}
+                      </span>
+                    </div>
                   </div>
                 ))}
+                <div ref={messagesEndRef} />
               </div>
-              <form onSubmit={handleSendMessage} className="message-input">
+
+              <div className="message-input-container">
+                <button 
+                  className="image-upload-button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                >
+                  {isUploading ? 'Uploading...' : '📷'}
+                </button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileSelect}
+                  accept="image/jpeg,image/png,image/heic,image/heif"
+                  style={{ display: 'none' }}
+                />
                 <input
                   type="text"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="Type a message..."
+                  className="message-input"
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                 />
-                <button type="submit">Send</button>
-              </form>
+                <button 
+                  onClick={handleSendMessage}
+                  className="send-button"
+                  disabled={!newMessage.trim()}
+                >
+                  Send
+                </button>
+              </div>
             </>
           ) : (
             <div className="no-conversation">

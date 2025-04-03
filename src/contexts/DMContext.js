@@ -71,14 +71,15 @@ export function DMProvider({ children }) {
     }
   };
 
-  const sendMessage = async (conversationId, text) => {
+  const sendMessage = async (conversationId, text, imageUrl = null) => {
     try {
       if (!currentUser) return;
 
       const messageData = {
-        text,
+        text: text || '',
         senderId: currentUser.uid,
-        timestamp: new Date()
+        timestamp: new Date(),
+        imageUrl: imageUrl || null
       };
 
       await addDoc(collection(db, `dms/${conversationId}/messages`), messageData);
