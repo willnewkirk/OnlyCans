@@ -324,16 +324,6 @@ export default function AppContent({ showAllPosts = false }) {
 
   const displayPosts = showAllPosts ? posts : posts.slice(0, 5);
 
-  if (error) {
-    return (
-      <div className="error-container">
-        <h1>Error</h1>
-        <p>{error}</p>
-        <button onClick={() => setError(null)}>Dismiss</button>
-      </div>
-    );
-  }
-
   return (
     <div className="app-content">
       <Header />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { db } from '../firebase';
 import { collection, query, where, orderBy, onSnapshot, getDocs, doc, updateDoc, deleteDoc, arrayUnion } from 'firebase/firestore';
@@ -260,54 +260,80 @@ function Profile() {
       <Header />
       <div className="profile-container">
         <div className="profile-header">
-          <h1>{username || 'Profile'}</h1>
-          {renderFlairs(username)}
+          <div className="profile-info">
+            <h1 className="profile-username">
+              {username}
+            </h1>
+            {renderFlairs(username)}
+          </div>
         </div>
         <div className="profile-content">
           {loading ? (
             <div className="loading">Loading posts...</div>
           ) : error ? (
-            <div className="error">
-              {error}
-              <button 
-                onClick={() => window.location.reload()} 
-                className="retry-button"
-              >
-                Retry
-              </button>
-            </div>
+            <div className="error">{error}</div>
           ) : userPosts.length === 0 ? (
             <div className="no-posts">No posts yet</div>
           ) : (
-            <div className="user-posts">
+            <div className="posts-grid">
               {userPosts.map(post => (
-                <div 
-                  key={post.id} 
-                  className="profile-post"
-                  onClick={() => setSelectedPost(post)}
-                >
-                  <div className="profile-post-header">
-                    <span className="profile-post-title">{post.title}</span>
-                    <span className="profile-post-time">{formatTimestamp(post.timestamp)}</span>
+                <div key={post.id} className="profile-post" onClick={() => setSelectedPost(post)}>
+                  <div className="post-header">
+                    <div className="post-header-left">
+                      <span className="post-author">{post.authorName}</span>
+                      <span className="post-timestamp">{formatTimestamp(post.timestamp)}</span>
+                    </div>
+                    {(post.authorId === currentUser?.uid || currentUser?.uid === 'amleth_user_id') && (
+                      <button 
+                        className="delete-button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(post.id);
+                        }}
+                      >
+                        🗑️
+                      </button>
+                    )}
                   </div>
-                  <div className="profile-post-content">
-                    {post.content}
-                  </div>
+                  <h3 className="post-title">{post.title}</h3>
+                  <p className="post-content">{post.content}</p>
                   {post.imageUrl && (
-                    <div className="profile-post-image">
-                      <img src={post.imageUrl} alt={post.title} />
+                    <div className="post-image-container">
+                      <img src={post.imageUrl} alt="Post" className="post-image" />
                     </div>
                   )}
-                  <div className="profile-post-stats">
-                    <span>👍 {post.votes || 0}</span>
-                    <span>💬 {post.comments?.length || 0}</span>
+                  <div className="post-actions">
+                    <div className="vote-buttons">
+                      <button 
+                        className={`vote-button ${post.userVotes?.[currentUser?.uid] === 'up' ? 'active' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleVote(post.id, 'up');
+                        }}
+                      >
+                        👍
+                      </button>
+                      <span className="vote-count">{post.votes || 0}</span>
+                      <button 
+                        className={`vote-button ${post.userVotes?.[currentUser?.uid] === 'down' ? 'active' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleVote(post.id, 'down');
+                        }}
+                      >
+                        👎
+                      </button>
+                    </div>
+                    <span className="comment-count">
+                      💬 {post.comments?.length || 0}
+                    </span>
                   </div>
                 </div>
               ))}
             </div>
           )}
         </div>
-        {currentUser && currentUser.displayName === username && (
+        {currentUser?.displayName === username && (
           <ProfileSettings />
         )}
       </div>
@@ -316,8 +342,8 @@ function Profile() {
           post={selectedPost}
           onClose={() => setSelectedPost(null)}
           onVote={handleVote}
+          onDelete={handleDelete}
           onComment={handleComment}
-          onDeletePost={handleDelete}
           onDeleteComment={handleDeleteComment}
         />
       )}

@@ -1,12 +1,14 @@
 .profile-page {
   min-height: 100vh;
   background-color: #1a1a1a;
+  color: #ffffff;
 }
 
 .profile-container {
-  max-width: 800px;
-  margin: 80px auto 0;
-  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  margin-top: 80px;
 }
 
 .profile-header {
@@ -159,10 +161,41 @@
   font-size: 14px;
 }
 
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-username {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.dm-link {
+  color: #9C27B0;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.dm-link:hover {
+  transform: scale(1.1);
+}
+
+.dm-icon {
+  width: 24px;
+  height: 24px;
+  stroke: #9C27B0;
+}
+
 /* Mobile Responsive Styles */
 @media screen and (max-width: 768px) {
   .profile-container {
-    margin-top: 60px;
+    margin-top: 100px;
     padding: 16px;
   }
 
@@ -208,6 +241,11 @@
 }
 
 @media screen and (max-width: 480px) {
+  .profile-container {
+    margin-top: 90px;
+    padding: 12px;
+  }
+
   .profile-header h1 {
     font-size: 24px;
   }

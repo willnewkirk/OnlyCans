@@ -5,9 +5,13 @@
   right: 0;
   background-color: #2d2d2d;
   z-index: 1000;
-  padding: 12px 0;
+  padding: 12px 24px;
   border: none;
   box-shadow: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 50px;
 }
 
 .header-content {
@@ -18,25 +22,49 @@
   justify-content: space-between;
   align-items: center;
   position: relative;
-  height: 130px;
+  height: 100px;
+}
+
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .logo-link {
   display: flex;
   align-items: flex-start;
   text-decoration: none;
-  width: 130px;
-  margin-left: -5%;
-  margin-top: 4%;
+  width: auto;
+  margin-left: 0;
+  margin-top: 0;
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #9C27B0;
+  font-weight: 700;
+  font-size: 2rem;
+  color: #b388ff;
+  text-shadow: 2px 2px 0px #9575cd;
   margin: 0;
-  color: #ffffff;
-  font-size: 24px;
-  font-weight: 400;
-  transition: color 0.2s;
-  text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+  padding: 0;
+  position: relative;
+  transition: all 0.3s ease;
+  background: linear-gradient(45deg, #b388ff, #9575cd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logo img {
+  height: 150px !important;
+  width: auto;
+  object-fit: contain;
+  margin-top: 0;
+  position: relative;
+  top: 25px;
 }
 
 .logo-link:hover .logo {
@@ -55,6 +83,10 @@
 .header-logo:hover {
   transform: scale(1.1);
   filter: drop-shadow(3px 3px 4px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 15px rgba(138, 43, 226, 0.8));
+}
+
+.mobile-logo {
+  height: 200px;
 }
 
 .search-bar {
@@ -117,6 +149,69 @@
   font-family: 'Permanent Marker', cursive;
 }
 
+.dm-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #3d3d3d;
+  border-radius: 50%;
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.dm-button:hover {
+  background-color: #4d4d4d;
+  transform: scale(1.1);
+}
+
+.profile-link {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.profile-link:hover {
+  color: #b388ff;
+}
+
+.logout-button {
+  background-color: #3d3d3d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-button:hover {
+  background-color: #4d4d4d;
+}
+
+.login-button, .signup-button {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.login-button {
+  background-color: #3d3d3d;
+  color: white;
+}
+
+.signup-button {
+  background-color: #9C27B0;
+  color: white;
+}
+
+.login-button:hover, .signup-button:hover {
+  transform: scale(1.05);
+}
+
 @media (max-width: 768px) {
   .header-content {
     padding: 0 16px;
@@ -124,6 +219,11 @@
   }
 
   .header-logo {
+    height: 100px;
+    margin-top: 12px;
+  }
+
+  .mobile-logo {
     height: 100px;
     margin-top: 12px;
   }
@@ -150,6 +250,20 @@
     margin-left: -5%;
     margin-top: 2%;
   }
+
+  .header-right {
+    gap: 0.5rem;
+  }
+
+  .dm-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .profile-link, .logout-button {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -159,6 +273,11 @@
   }
 
   .header-logo {
+    height: 80px;
+    margin-top: 8px;
+  }
+
+  .mobile-logo {
     height: 80px;
     margin-top: 8px;
   }
@@ -180,5 +299,19 @@
   .logo-link {
     margin-left: -2%;
     margin-top: 1%;
+  }
+
+  .header-right {
+    gap: 0.25rem;
+  }
+
+  .dm-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .profile-link, .logout-button {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
   }
 } 
